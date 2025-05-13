@@ -1,5 +1,8 @@
 import { overlock } from "@overlocknetwork/api";
 
+export type Cluster = "devnet" | "testnet" | "mainnet-beta";
+export type SolanaNetwork = { name: Cluster; icon: React.ElementType };
+
 export type Network = { name: string; icon: React.ElementType };
 
 export type NetworkMeta = {
