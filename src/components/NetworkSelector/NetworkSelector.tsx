@@ -14,9 +14,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronsUpDown } from "lucide-react";
+import { useNetwork } from "../NetworkProvider";
 
 export function NetworkSelector() {
   const sidebar = useSidebar();
+  const { currentNetwork, networks, setCurrentNetwork } = useNetwork();
 
   return (
     <>
@@ -38,7 +40,9 @@ export function NetworkSelector() {
                   <span className="truncate font-semibold">
                     Overlock Studio
                   </span>
-                  <span className="truncate text-xs">currentNetwork.name</span>
+                  <span className="truncate text-xs">
+                    {currentNetwork.name}
+                  </span>
                 </div>
                 <ChevronsUpDown className="ml-auto" />
               </SidebarMenuButton>
@@ -52,9 +56,18 @@ export function NetworkSelector() {
               <DropdownMenuLabel className="text-muted-foreground text-xs">
                 Networks
               </DropdownMenuLabel>
-              <DropdownMenuItem className="gap-2 p-2">
-                network.name
-              </DropdownMenuItem>
+              {networks.map((network) => (
+                <DropdownMenuItem
+                  key={network.name}
+                  onClick={() => setCurrentNetwork(network)}
+                  className="gap-2 p-2"
+                >
+                  <div className="flex size-6 items-center justify-center rounded-xs border">
+                    <network.icon className="size-4 shrink-0" />
+                  </div>
+                  {network.name}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </SidebarMenuItem>
