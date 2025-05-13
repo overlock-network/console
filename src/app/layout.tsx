@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider as ShadcnThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { SidebarProvider } from "@/components/SidebarProvider";
+import { NetworkProvider } from "@/components/NetworkProvider";
 
 export const metadata: Metadata = {
   title: "Overlock",
@@ -25,8 +26,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SidebarProvider>{children}</SidebarProvider>
-          <Toaster />
+          <NetworkProvider>
+            <SidebarProvider>{children}</SidebarProvider>
+            <Toaster />
+          </NetworkProvider>
         </ShadcnThemeProvider>
       </body>
     </html>
