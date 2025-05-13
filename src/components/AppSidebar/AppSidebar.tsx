@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { LibraryBig } from "lucide-react";
 import {

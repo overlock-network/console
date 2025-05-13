@@ -5,6 +5,8 @@ import { ThemeProvider as ShadcnThemeProvider } from "@/components/theme-provide
 import { Toaster } from "@/components/ui/toaster";
 import { SidebarProvider } from "@/components/SidebarProvider";
 import { NetworkProvider } from "@/components/NetworkProvider";
+import "@solana/wallet-adapter-react-ui/styles.css";
+import { AppWalletProvider } from "@/components/AppWalletProvider";
 
 export const metadata: Metadata = {
   title: "Overlock",
@@ -26,10 +28,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NetworkProvider>
-            <SidebarProvider>{children}</SidebarProvider>
-            <Toaster />
-          </NetworkProvider>
+          <AppWalletProvider>
+            <NetworkProvider>
+              <SidebarProvider>{children}</SidebarProvider>
+              <Toaster />
+            </NetworkProvider>
+          </AppWalletProvider>
         </ShadcnThemeProvider>
       </body>
     </html>

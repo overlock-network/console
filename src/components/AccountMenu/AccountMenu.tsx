@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,26 +16,54 @@ import {
 import { ChevronsUpDown, Copy, LogOut, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Spinner } from "../Spinner";
 import { useRouter } from "next/navigation";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 export function AccountMenu() {
   const { toast } = useToast();
-  const signerAddress = "cosmos1d5q6t64ht8jnrzpepgyff5klk96j847pkv6a75";
+  const { publicKey, disconnect, connected } = useWallet();
+  const { connection } = useConnection();
+  const { setVisible } = useWalletModal();
   const router = useRouter();
 
-  const handleCopyAddress = async () => {
-    await navigator.clipboard.writeText(signerAddress || "").finally(() => {
-      toast({
-        title: "Address copied to clipboard",
+  const [balance, setBalance] = useState<number | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  React.useEffect(() => {
+    if (publicKey) {
+      connection.getBalance(publicKey).then((lamports) => {
+        setBalance(lamports / LAMPORTS_PER_SOL);
       });
-    });
+    }
+  }, [publicKey, connection]);
+
+  const handleCopyAddress = async () => {
+    await navigator.clipboard
+      .writeText(publicKey?.toString() || "")
+      .finally(() => {
+        toast({
+          title: "Address copied to clipboard",
+        });
+      });
+  };
+
+  const handleDropdownOpenChange = (open: boolean) => {
+    if (!connected) {
+      setVisible(true);
+      return;
+    }
+    setIsDropdownOpen(open);
   };
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
+        <DropdownMenu
+          open={isDropdownOpen}
+          onOpenChange={handleDropdownOpenChange}
+        >
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
@@ -43,10 +71,10 @@ export function AccountMenu() {
             >
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span
-                  className="text-ellipsis font-semibold whitespace-nowrap overflow-hidden text-right"
+                  className="text-ellipsis font-semibold whitespace-nowrap overflow-hidden text-left"
                   style={{ direction: "rtl" }}
                 >
-                  {!signerAddress ? <Spinner /> : signerAddress}
+                  {!publicKey ? "Connect" : publicKey.toString()}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -62,18 +90,20 @@ export function AccountMenu() {
               <div className="flex gap-2 px-1 py-1.5 text-left text-sm items-center">
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span
-                    className="text-ellipsis font-semibold whitespace-nowrap overflow-hidden text-right"
+                    className="text-ellipsis font-semibold whitespace-nowrap overflow-hidden text-left"
                     style={{ direction: "rtl" }}
                   >
-                    {!signerAddress ? <Spinner /> : signerAddress}
+                    {publicKey?.toString()}
                   </span>
                 </div>
-                <Copy
-                  width={15}
-                  height={15}
-                  className="cursor-pointer"
-                  onClick={handleCopyAddress}
-                />
+                {publicKey && (
+                  <Copy
+                    width={15}
+                    height={15}
+                    className="cursor-pointer"
+                    onClick={handleCopyAddress}
+                  />
+                )}
               </div>
             </DropdownMenuLabel>
             <DropdownMenuLabel className="px-0 pb-0 pt-2 font-normal">
@@ -81,8 +111,10 @@ export function AccountMenu() {
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableCell>denom</TableCell>
-                    <TableCell align="right">99999999</TableCell>
+                    <TableCell>SOL</TableCell>
+                    <TableCell align="right">
+                      {balance !== null ? balance.toFixed(4) : "Loading..."}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -92,9 +124,15 @@ export function AccountMenu() {
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={async () => {
+                await disconnect();
+                setIsDropdownOpen(false);
+              }}
+            >
               <LogOut />
-              Log out
+              Disconnect
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
