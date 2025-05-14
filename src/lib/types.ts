@@ -96,3 +96,9 @@ export type ListTableData = {
   id: string;
   name: string | undefined;
 };
+
+export interface NftData {
+  name: string;
+  image: string;
+  description?: string;
+}
