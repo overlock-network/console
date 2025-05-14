@@ -10,13 +10,11 @@ import { useSolanaNetwork } from "../SolanaNetworkProvider";
 export function AppWalletProvider({ children }: { children: React.ReactNode }) {
   const { endpoint } = useSolanaNetwork();
 
-  if (endpoint) {
-    return (
-      <ConnectionProvider endpoint={endpoint}>
-        <WalletProvider wallets={[]} autoConnect>
-          <WalletModalProvider>{children}</WalletModalProvider>
-        </WalletProvider>
-      </ConnectionProvider>
-    );
-  }
+  return (
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={[]} autoConnect>
+        <WalletModalProvider>{children}</WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
+  );
 }

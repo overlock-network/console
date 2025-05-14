@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import {
   DropdownMenu,
@@ -31,13 +32,23 @@ export function AccountMenu() {
   const [balance, setBalance] = useState<number | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  React.useEffect(() => {
+  const fetchBalance = async () => {
     if (publicKey) {
-      connection.getBalance(publicKey).then((lamports) => {
-        setBalance(lamports / LAMPORTS_PER_SOL);
-      });
+      const lamports = await connection.getBalance(publicKey);
+      setBalance(lamports / LAMPORTS_PER_SOL);
     }
-  }, [publicKey, connection]);
+  };
+
+  const handleDropdownOpenChange = (open: boolean) => {
+    if (!connected) {
+      setVisible(true);
+      return;
+    }
+    setIsDropdownOpen(open);
+    if (open && publicKey) {
+      fetchBalance();
+    }
+  };
 
   const handleCopyAddress = async () => {
     await navigator.clipboard
@@ -47,14 +58,6 @@ export function AccountMenu() {
           title: "Address copied to clipboard",
         });
       });
-  };
-
-  const handleDropdownOpenChange = (open: boolean) => {
-    if (!connected) {
-      setVisible(true);
-      return;
-    }
-    setIsDropdownOpen(open);
   };
 
   return (
