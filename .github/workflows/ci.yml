@@ -19,17 +19,23 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Yarn
-        run: npm install -g yarn
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Prepare Yarn 4
+        run: corepack prepare yarn@4.4.1 --activate
 
       - name: Authenticate with private NPM package
         run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.ACCESS_TOKEN }}" > ~/.npmrc
 
-      - run: yarn install --frozen-lockfile
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-      - run: yarn lint
+      - name: Lint code
+        run: yarn next-lint
 
       - name: Check Prettier formatting
         run: yarn format:check
 
-      - run: yarn build
+      - name: Build project
+        run: yarn next-build

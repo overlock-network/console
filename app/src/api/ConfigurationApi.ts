@@ -24,7 +24,7 @@ export async function listConfiguration(
         }),
       ),
     );
-    
+
     const allMetadata = metadataArrays.flat();
 
     const totalCount = allMetadata.length;
@@ -50,7 +50,7 @@ export async function listConfiguration(
     const filtered = loaded.filter((n) => n && n.image && n.name) as NftData[];
 
     return { nfts: filtered, totalCount };
-  } catch (e) { console.log(e)
+  } catch {
     return { nfts: [], totalCount: 0 };
   }
 }
