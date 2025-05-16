@@ -64,7 +64,11 @@ export default function Content() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
           {nfts.map((nft, idx) => (
             <Card key={idx} className="overflow-hidden">
-              <Image src={nft.image} alt={nft.name} className="object-cover w-full h-full" />
+              <Image
+                src={nft.image}
+                alt={nft.name}
+                className="object-cover w-full h-full"
+              />
               <CardHeader>
                 <CardTitle className="text-lg truncate">{nft.name}</CardTitle>
                 {nft.description && (
