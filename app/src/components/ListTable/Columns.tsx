@@ -1,42 +1,74 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "./ColumnHeader";
-import { RowActions } from "./RowActions";
-import { ListTableData } from "@/lib/types";
+import { ProvidersTableColumnHeader } from "./ColumnHeader";
+import { ProgramAccount } from "@coral-xyz/anchor";
 
-export const columns = (
-  actions?: Array<{
-    label: string;
-    path?: (row: ListTableData) => string;
-    onClick?: (row: ListTableData) => void;
-    shortcut?: string;
-  }>,
-): ColumnDef<ListTableData>[] => [
+export const columns = (): ColumnDef<
+  ProgramAccount<{
+    name: string;
+    ip: string;
+    port: number;
+    country: string;
+    environmentType: string;
+    availability: boolean;
+  }>
+>[] => [
   {
-    accessorKey: "id",
+    accessorKey: "publicKey",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID" />
+      <ProvidersTableColumnHeader column={column} title="PublicKey" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+    cell: ({ row }) => (
+      <div className="w-[120px] truncate">
+        {row.original.publicKey.toBase58()}
+      </div>
+    ),
   },
   {
     accessorKey: "name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
+      <ProvidersTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("name")}
-          </span>
-        </div>
-      );
-    },
+    cell: ({ row }) => (
+      <div className="truncate">{row.original.account.name}</div>
+    ),
   },
   {
-    id: "actions",
-    cell: ({ row }) => <RowActions row={row} actions={actions} />,
+    accessorKey: "ip",
+    header: ({ column }) => (
+      <ProvidersTableColumnHeader column={column} title="IP" />
+    ),
+    cell: ({ row }) => (
+      <div className="truncate">{row.original.account.ip}</div>
+    ),
+  },
+  {
+    accessorKey: "port",
+    header: ({ column }) => (
+      <ProvidersTableColumnHeader column={column} title="Port" />
+    ),
+    cell: ({ row }) => row.original.account.port,
+  },
+  {
+    accessorKey: "country",
+    header: ({ column }) => (
+      <ProvidersTableColumnHeader column={column} title="Country" />
+    ),
+    cell: ({ row }) => row.original.account.country,
+  },
+  {
+    accessorKey: "environmentType",
+    header: ({ column }) => (
+      <ProvidersTableColumnHeader column={column} title="Environment" />
+    ),
+    cell: ({ row }) => row.original.account.environmentType,
+  },
+  {
+    accessorKey: "availability",
+    header: ({ column }) => (
+      <ProvidersTableColumnHeader column={column} title="Available" />
+    ),
+    cell: ({ row }) => (row.original.account.availability ? "✅ Yes" : "❌ No"),
   },
 ];

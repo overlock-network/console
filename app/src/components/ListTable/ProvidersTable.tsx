@@ -23,26 +23,42 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { DataTablePagination } from "./Pagination";
-import { DataTableToolbar } from "./Toolbar";
+import { ProvidersTablePagination } from "./Pagination";
+import { ProvidersTableToolbar } from "./Toolbar";
 import { useState } from "react";
 import { Spinner } from "../Spinner";
-import { ListTableData } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import { ProgramAccount } from "@coral-xyz/anchor";
 
-interface DataTableProps<ListTableData> {
-  columns: ColumnDef<ListTableData>[];
-  data: ListTableData[];
+interface ProvidersTableProps {
+  columns: ColumnDef<
+    ProgramAccount<{
+      name: string;
+      ip: string;
+      port: number;
+      country: string;
+      environmentType: string;
+      availability: boolean;
+    }>
+  >[];
+  data: ProgramAccount<{
+    name: string;
+    ip: string;
+    port: number;
+    country: string;
+    environmentType: string;
+    availability: boolean;
+  }>[];
   isLoading: boolean;
   elementPath?: string;
 }
 
-export function DataTable({
+export function ProvidersTable({
   columns,
   data,
   isLoading,
   elementPath,
-}: DataTableProps<ListTableData>) {
+}: ProvidersTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -73,7 +89,7 @@ export function DataTable({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} />
+      <ProvidersTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -112,7 +128,9 @@ export function DataTable({
                   className={elementPath ? "cursor-pointer" : ""}
                   onClick={() => {
                     if (elementPath)
-                      router.push(`${elementPath}/${row.getValue("id")}`);
+                      router.push(
+                        `${elementPath}/${row.getValue("PublicKey")}`,
+                      );
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -138,7 +156,7 @@ export function DataTable({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      <ProvidersTablePagination table={table} />
     </div>
   );
 }

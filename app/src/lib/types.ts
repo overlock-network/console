@@ -1,6 +1,6 @@
 import { overlock } from "@overlocknetwork/api";
 
-export type Cluster = "devnet" | "testnet" | "mainnet-beta";
+export type Cluster = "devnet" | "testnet" | "mainnet-beta" | "localnet";
 export type SolanaNetwork = { name: Cluster; icon: React.ElementType };
 
 export type Network = { name: string; icon: React.ElementType };
@@ -90,11 +90,6 @@ export type LCDClient = {
       v1beta1: InstanceType<typeof overlock.storage.v1beta1.LCDQueryClient>;
     };
   };
-};
-
-export type ListTableData = {
-  id: string;
-  name: string | undefined;
 };
 
 export interface NftData {

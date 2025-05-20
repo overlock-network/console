@@ -4,20 +4,25 @@ on:
   pull_request:
 
 permissions:
-  actions: read
   contents: read
+  actions: read
+  packages: read
 
 jobs:
   main:
     runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/overlock-network/anchor:v0.31.1
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
 
       - name: Enable Corepack
         run: corepack enable
@@ -25,11 +30,26 @@ jobs:
       - name: Prepare Yarn 4
         run: corepack prepare yarn@4.4.1 --activate
 
-      - name: Authenticate with private NPM package
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.ACCESS_TOKEN }}" > ~/.npmrc
-
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
+      - name: Set default Rust toolchain
+        run: rustup default stable
+
+      - name: Generate Solana keypair
+        run: solana-keygen new --no-passphrase
+
+      - name: Set Solana target cluster to local
+        run: solana config set --url http://localhost:8899
+
+      - name: Anchor Build
+        run: anchor build
+
+      - name: Run Anchor tests
+        run: anchor test
+
+      - name: Authenticate with private NPM package
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.ACCESS_TOKEN }}" > ~/.npmrc
 
       - name: Lint code
         run: yarn next-lint

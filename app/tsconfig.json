@@ -19,8 +19,8 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@project/anchor": ["anchor/src"],
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@anchor/target/*": ["../target/*"]
     },
     "target": "es2020",
     "experimentalDecorators": true,
