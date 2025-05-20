@@ -129,7 +129,7 @@ export function ProvidersTable({
                   onClick={() => {
                     if (elementPath)
                       router.push(
-                        `${elementPath}/${row.getValue("PublicKey")}`,
+                        `${elementPath}/${row.getValue("publicKey")}`,
                       );
                   }}
                 >

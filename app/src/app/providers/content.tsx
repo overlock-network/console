@@ -24,22 +24,26 @@ export default function Content() {
   const { anchorProvider } = useSolanaNetwork();
 
   const fetchData = async () => {
-    setIsLoading(true);
-    const program = new Program<ProviderProgram>(idl, anchorProvider);
+    if (anchorProvider) {
+      setIsLoading(true);
+      const program = new Program<ProviderProgram>(idl, anchorProvider);
 
-    program.account.provider
-      .all()
-      .then((res) => {
-        setTableData(res);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      program.account.provider
+        .all()
+        .then((res) => {
+          setTableData(res);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [anchorProvider]);
+
+  const elementPath = "/providers";
 
   return (
     <>
@@ -55,6 +59,7 @@ export default function Content() {
         columns={columns()}
         data={tableData}
         isLoading={isLoading}
+        elementPath={elementPath}
       />
     </>
   );
