@@ -1,13 +1,11 @@
+#![allow(clippy::result_large_err)]
+use anchor_lang::prelude::*;
+use instructions::*;
+
 pub mod constants;
 pub mod error;
 pub mod instructions;
 pub mod state;
-
-use anchor_lang::prelude::*;
-
-pub use constants::*;
-pub use instructions::*;
-pub use state::*;
 
 declare_id!("F6MJX57V1LjRHxF6a7zbJGT8MyQfYAv8jrDZ8DnXpgtV");
 
@@ -15,7 +13,12 @@ declare_id!("F6MJX57V1LjRHxF6a7zbJGT8MyQfYAv8jrDZ8DnXpgtV");
 pub mod environment {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        initialize::handler(ctx)
+    pub fn create_environment(
+        ctx: Context<CreateEnvironment>,
+        name: String,
+        owner: Pubkey,
+        provider: Pubkey,
+    ) -> Result<()> {
+        create::create_environment(ctx, name, owner, provider)
     }
 }
