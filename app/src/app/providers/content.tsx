@@ -1,40 +1,45 @@
 "use client";
 
 import { columns } from "@/components/ListTable/Columns";
-import { DataTable } from "@/components/ListTable/DataTable";
+import { ProvidersTable } from "@/components/ListTable/ProvidersTable";
 import { useEffect, useState } from "react";
-import { ListTableData } from "@/lib/types";
-import { listProvider } from "@/api/ProviderApi";
-import { useNetwork } from "@/components/NetworkProvider";
+import { Program, ProgramAccount } from "@coral-xyz/anchor";
+import type { Provider as ProviderProgram } from "@anchor/target/types/provider";
+import idl from "@anchor/target/idl/provider.json";
+import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
 
 export default function Content() {
-  const [tableData, setTableData] = useState<ListTableData[]>([]);
+  const [tableData, setTableData] = useState<
+    ProgramAccount<{
+      name: string;
+      ip: string;
+      port: number;
+      country: string;
+      environmentType: string;
+      availability: boolean;
+    }>[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { LCDClient } = useNetwork();
+
+  const { anchorProvider } = useSolanaNetwork();
 
   const fetchData = async () => {
     setIsLoading(true);
-    if (LCDClient) {
-      await listProvider(LCDClient)
-        .then((res) => {
-          setTableData(
-            res.map((prov) => ({
-              id: prov.id.toString(),
-              name: prov.metadata?.name,
-            })) || [],
-          );
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
+    const program = new Program<ProviderProgram>(idl, anchorProvider);
+
+    program.account.provider
+      .all()
+      .then((res) => {
+        setTableData(res);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {
     fetchData();
-  }, [LCDClient]);
-
-  const elementPath = "/providers";
+  }, []);
 
   return (
     <>
@@ -46,11 +51,10 @@ export default function Content() {
           </p>
         </div>
       </div>
-      <DataTable
+      <ProvidersTable
         columns={columns()}
         data={tableData}
         isLoading={isLoading}
-        elementPath={elementPath}
       />
     </>
   );

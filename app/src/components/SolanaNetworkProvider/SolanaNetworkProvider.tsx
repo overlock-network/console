@@ -2,7 +2,7 @@
 
 import { SolanaNetwork } from "@/lib/types";
 import { clusterApiUrl, Connection } from "@solana/web3.js";
-import { Box, Cog, TestTubeDiagonal } from "lucide-react";
+import { Box, Cog, MapPin, TestTubeDiagonal } from "lucide-react";
 import React, {
   createContext,
   useContext,
@@ -12,6 +12,8 @@ import React, {
 } from "react";
 import { Metaplex } from "@metaplex-foundation/js";
 import { Spinner } from "../Spinner";
+import { AnchorProvider } from "@coral-xyz/anchor";
+import { useAnchorWallet } from "@solana/wallet-adapter-react";
 
 interface SolanaNetworkContextType {
   solanaNetworks: SolanaNetwork[];
@@ -22,6 +24,7 @@ interface SolanaNetworkContextType {
   endpoint: string;
   connection: Connection;
   metaplexConnection: Metaplex;
+  anchorProvider: AnchorProvider;
 }
 
 const SolanaNetworkContext = createContext<SolanaNetworkContextType | null>(
@@ -44,11 +47,14 @@ const SolanaNetworkProvider: React.FC<{ children: React.ReactNode }> = ({
       name: "mainnet-beta",
       icon: Box,
     },
+    {
+      name: "localnet",
+      icon: MapPin,
+    },
   ];
 
-  const [currentSolanaNetwork, setCurrentSolanaNetwork] = useState<
-    SolanaNetwork | undefined
-  >();
+  const [currentSolanaNetwork, setCurrentSolanaNetwork] =
+    useState<SolanaNetwork>();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -63,7 +69,13 @@ const SolanaNetworkProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const endpoint = useMemo(() => {
-    if (currentSolanaNetwork) return clusterApiUrl(currentSolanaNetwork.name);
+    if (currentSolanaNetwork) {
+      if (currentSolanaNetwork.name === "localnet") {
+        return process.env.NEXT_PUBLIC_ANCHOR_PROVIDER_URL;
+      } else {
+        return clusterApiUrl(currentSolanaNetwork.name);
+      }
+    }
   }, [currentSolanaNetwork]);
 
   const connection = useMemo(() => {
@@ -73,6 +85,13 @@ const SolanaNetworkProvider: React.FC<{ children: React.ReactNode }> = ({
   const metaplexConnection = useMemo(() => {
     if (connection) return Metaplex.make(connection);
   }, [connection]);
+
+  const anchorWallet = useAnchorWallet();
+
+  const anchorProvider = useMemo(() => {
+    if (connection && anchorWallet)
+      return new AnchorProvider(connection, anchorWallet, {});
+  }, [connection, anchorWallet]);
 
   useEffect(() => {
     if (currentSolanaNetwork && typeof window !== "undefined") {
@@ -84,7 +103,8 @@ const SolanaNetworkProvider: React.FC<{ children: React.ReactNode }> = ({
     currentSolanaNetwork === undefined ||
     endpoint === undefined ||
     connection === undefined ||
-    metaplexConnection === undefined
+    metaplexConnection === undefined ||
+    anchorProvider === undefined
   ) {
     return (
       <div className="flex h-[100vh] w-full justify-center items-center">
@@ -100,6 +120,7 @@ const SolanaNetworkProvider: React.FC<{ children: React.ReactNode }> = ({
     endpoint,
     connection,
     metaplexConnection,
+    anchorProvider,
   };
 
   return (

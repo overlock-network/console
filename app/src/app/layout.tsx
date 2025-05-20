@@ -8,6 +8,7 @@ import { NetworkProvider } from "@/components/NetworkProvider";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { AppWalletProvider } from "@/components/AppWalletProvider";
 import { SolanaNetworkProvider } from "@/components/SolanaNetworkProvider";
+import { AppConnectionProvider } from "@/components/AppConnectionProvider";
 
 export const metadata: Metadata = {
   title: "Overlock",
@@ -30,12 +31,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <NetworkProvider>
-            <SolanaNetworkProvider>
-              <AppWalletProvider>
-                <SidebarProvider>{children}</SidebarProvider>
-                <Toaster />
-              </AppWalletProvider>
-            </SolanaNetworkProvider>
+            <AppWalletProvider>
+              <SolanaNetworkProvider>
+                <AppConnectionProvider>
+                  <SidebarProvider>{children}</SidebarProvider>
+                  <Toaster />
+                </AppConnectionProvider>
+              </SolanaNetworkProvider>
+            </AppWalletProvider>
           </NetworkProvider>
         </ShadcnThemeProvider>
       </body>
