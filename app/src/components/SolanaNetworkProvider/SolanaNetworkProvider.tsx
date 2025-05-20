@@ -24,7 +24,7 @@ interface SolanaNetworkContextType {
   endpoint: string;
   connection: Connection;
   metaplexConnection: Metaplex;
-  anchorProvider: AnchorProvider;
+  anchorProvider?: AnchorProvider;
 }
 
 const SolanaNetworkContext = createContext<SolanaNetworkContextType | null>(
@@ -103,8 +103,7 @@ const SolanaNetworkProvider: React.FC<{ children: React.ReactNode }> = ({
     currentSolanaNetwork === undefined ||
     endpoint === undefined ||
     connection === undefined ||
-    metaplexConnection === undefined ||
-    anchorProvider === undefined
+    metaplexConnection === undefined
   ) {
     return (
       <div className="flex h-[100vh] w-full justify-center items-center">

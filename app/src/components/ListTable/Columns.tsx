@@ -17,7 +17,7 @@ export const columns = (): ColumnDef<
   {
     accessorKey: "publicKey",
     header: ({ column }) => (
-      <ProvidersTableColumnHeader column={column} title="PublicKey" />
+      <ProvidersTableColumnHeader column={column} title="Id" />
     ),
     cell: ({ row }) => (
       <div className="w-[120px] truncate">
