@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Code, LibraryBig } from "lucide-react";
+import { Code, Container, LibraryBig } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -23,6 +23,11 @@ const items = [
     title: "Configurations",
     url: "/configurations",
     icon: Code,
+  },
+  {
+    title: "Environments",
+    url: "/environments",
+    icon: Container,
   },
   {
     title: "Providers",

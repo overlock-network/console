@@ -1,16 +1,16 @@
 "use client";
 
-import { providerColumns } from "@/components/ListTable/ProviderColumns";
+import { environmentColumns } from "@/components/ListTable/EnvironmentColumns";
 import { DataTable } from "@/components/ListTable/DataTable";
 import { useEffect, useState } from "react";
 import { Program, ProgramAccount } from "@coral-xyz/anchor";
-import type { Provider as ProviderProgram } from "@anchor/target/types/provider";
-import idl from "@anchor/target/idl/provider.json";
+import type { Environment as EnvironmentProgram } from "@anchor/target/types/environment";
+import idl from "@anchor/target/idl/environment.json";
 import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
-import { Provider } from "@/lib/types";
+import { Environment } from "@/lib/types";
 
 export default function Content() {
-  const [tableData, setTableData] = useState<ProgramAccount<Provider>[]>([]);
+  const [tableData, setTableData] = useState<ProgramAccount<Environment>[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const { anchorProvider } = useSolanaNetwork();
@@ -18,9 +18,9 @@ export default function Content() {
   const fetchData = async () => {
     if (anchorProvider) {
       setIsLoading(true);
-      const program = new Program<ProviderProgram>(idl, anchorProvider);
+      const program = new Program<EnvironmentProgram>(idl, anchorProvider);
 
-      program.account.provider
+      program.account.environment
         .all()
         .then((res) => {
           setTableData(res);
@@ -35,23 +35,20 @@ export default function Content() {
     fetchData();
   }, [anchorProvider]);
 
-  const elementPath = "/providers";
-
   return (
     <>
       <div className="flex items-end justify-between gap-2 space-y-2">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Providers</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Environments</h2>
           <p className="text-muted-foreground">
-            Here&apos;s a list of available providers!
+            Here&apos;s a list of available environments!
           </p>
         </div>
       </div>
-      <DataTable<ProgramAccount<Provider>>
-        columns={providerColumns()}
+      <DataTable<ProgramAccount<Environment>>
+        columns={environmentColumns()}
         data={tableData}
         isLoading={isLoading}
-        elementPath={elementPath}
       />
     </>
   );

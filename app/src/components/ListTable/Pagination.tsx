@@ -15,13 +15,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface ProvidersTablePaginationProps<TData> {
+interface DataTablePaginationProps<TData> {
   table: Table<TData>;
 }
 
-export function ProvidersTablePagination<TData>({
+export function DataTablePagination<TData>({
   table,
-}: ProvidersTablePaginationProps<TData>) {
+}: DataTablePaginationProps<TData>) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 lg:flex-nowrap">
       <div className="flex w-full items-center justify-between space-x-5 lg:space-x-8">
