@@ -1,23 +1,15 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ProvidersTableColumnHeader } from "./ColumnHeader";
+import { DataTableColumnHeader } from "./ColumnHeader";
+import { Provider } from "@/lib/types";
 import { ProgramAccount } from "@coral-xyz/anchor";
 
-export const columns = (): ColumnDef<
-  ProgramAccount<{
-    name: string;
-    ip: string;
-    port: number;
-    country: string;
-    environmentType: string;
-    availability: boolean;
-  }>
->[] => [
+export const providerColumns = (): ColumnDef<ProgramAccount<Provider>>[] => [
   {
     accessorKey: "publicKey",
     header: ({ column }) => (
-      <ProvidersTableColumnHeader column={column} title="Id" />
+      <DataTableColumnHeader column={column} title="Id" />
     ),
     cell: ({ row }) => (
       <div className="w-[120px] truncate">
@@ -28,7 +20,7 @@ export const columns = (): ColumnDef<
   {
     accessorKey: "name",
     header: ({ column }) => (
-      <ProvidersTableColumnHeader column={column} title="Name" />
+      <DataTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => (
       <div className="truncate">{row.original.account.name}</div>
@@ -37,7 +29,7 @@ export const columns = (): ColumnDef<
   {
     accessorKey: "ip",
     header: ({ column }) => (
-      <ProvidersTableColumnHeader column={column} title="IP" />
+      <DataTableColumnHeader column={column} title="IP" />
     ),
     cell: ({ row }) => (
       <div className="truncate">{row.original.account.ip}</div>
@@ -46,28 +38,28 @@ export const columns = (): ColumnDef<
   {
     accessorKey: "port",
     header: ({ column }) => (
-      <ProvidersTableColumnHeader column={column} title="Port" />
+      <DataTableColumnHeader column={column} title="Port" />
     ),
     cell: ({ row }) => row.original.account.port,
   },
   {
     accessorKey: "country",
     header: ({ column }) => (
-      <ProvidersTableColumnHeader column={column} title="Country" />
+      <DataTableColumnHeader column={column} title="Country" />
     ),
     cell: ({ row }) => row.original.account.country,
   },
   {
     accessorKey: "environmentType",
     header: ({ column }) => (
-      <ProvidersTableColumnHeader column={column} title="Environment" />
+      <DataTableColumnHeader column={column} title="Environment" />
     ),
     cell: ({ row }) => row.original.account.environmentType,
   },
   {
     accessorKey: "availability",
     header: ({ column }) => (
-      <ProvidersTableColumnHeader column={column} title="Available" />
+      <DataTableColumnHeader column={column} title="Available" />
     ),
     cell: ({ row }) => (row.original.account.availability ? "✅ Yes" : "❌ No"),
   },

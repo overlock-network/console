@@ -1,4 +1,7 @@
+import { IdlAccounts } from "@coral-xyz/anchor";
 import { overlock } from "@overlocknetwork/api";
+import type { Environment as EnvironmentProgram } from "@anchor/target/types/environment";
+import type { Provider as ProviderProgram } from "@anchor/target/types/provider";
 
 export type Cluster = "devnet" | "testnet" | "mainnet-beta" | "localnet";
 export type SolanaNetwork = { name: Cluster; icon: React.ElementType };
@@ -97,3 +100,7 @@ export interface NftData {
   image: string;
   description?: string;
 }
+
+export type Provider = IdlAccounts<ProviderProgram>["provider"];
+
+export type Environment = IdlAccounts<EnvironmentProgram>["environment"];
