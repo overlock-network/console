@@ -6,13 +6,13 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-interface ProvidersTableToolbarProps<TData> {
+interface DataTableToolbarProps<TData> {
   table: Table<TData>;
 }
 
-export function ProvidersTableToolbar<TData>({
+export function DataTableToolbar<TData>({
   table,
-}: ProvidersTableToolbarProps<TData>) {
+}: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (

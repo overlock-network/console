@@ -23,42 +23,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { ProvidersTablePagination } from "./Pagination";
-import { ProvidersTableToolbar } from "./Toolbar";
+import { DataTablePagination } from "./Pagination";
+import { DataTableToolbar } from "./Toolbar";
 import { useState } from "react";
 import { Spinner } from "../Spinner";
 import { useRouter } from "next/navigation";
-import { ProgramAccount } from "@coral-xyz/anchor";
 
-interface ProvidersTableProps {
-  columns: ColumnDef<
-    ProgramAccount<{
-      name: string;
-      ip: string;
-      port: number;
-      country: string;
-      environmentType: string;
-      availability: boolean;
-    }>
-  >[];
-  data: ProgramAccount<{
-    name: string;
-    ip: string;
-    port: number;
-    country: string;
-    environmentType: string;
-    availability: boolean;
-  }>[];
-  isLoading: boolean;
-  elementPath?: string;
-}
-
-export function ProvidersTable({
+export function DataTable<T extends object>({
   columns,
   data,
   isLoading,
   elementPath,
-}: ProvidersTableProps) {
+}: {
+  columns: ColumnDef<T>[];
+  data: T[];
+  isLoading: boolean;
+  elementPath?: string;
+}) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -89,7 +70,7 @@ export function ProvidersTable({
 
   return (
     <div className="space-y-4">
-      <ProvidersTableToolbar table={table} />
+      <DataTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -156,7 +137,7 @@ export function ProvidersTable({
           </TableBody>
         </Table>
       </div>
-      <ProvidersTablePagination table={table} />
+      <DataTablePagination table={table} />
     </div>
   );
 }
