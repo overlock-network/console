@@ -59,12 +59,10 @@ const SolanaNetworkProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedNetwork = localStorage.getItem("currentSolanaNetwork");
-      if (storedNetwork) {
-        setCurrentSolanaNetwork(
-          solanaNetworks.find((network) => network.name === storedNetwork) ||
-            solanaNetworks[0],
-        );
-      }
+      setCurrentSolanaNetwork(
+        solanaNetworks.find((network) => network.name === storedNetwork) ||
+          solanaNetworks[0],
+      );
     }
   }, []);
 

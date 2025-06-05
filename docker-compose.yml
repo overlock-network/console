@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  anchor:
+    image: ghcr.io/overlock-network/anchor:v0.31.1
+    build:
+      context: ./cluster/anchor
+      dockerfile: build/Dockerfile
+      args:
+        ANCHOR_CLI: v0.31.1
+        SOLANA_CLI: v2.1.0
+    command: ["anchor", "localnet"]
+    volumes:
+      - ./programs:/workdir/programs
+      - ./tests:/workdir/tests
+      - ./target:/workdir/target
+    working_dir: /workdir
+    ports:
+      - "8899:8899"
+      - "8900:8900"
+    networks:
+      - localnet
+
+  app:
+    image: nextjs-app
+    build:
+      context: .
+      dockerfile: cluster/app/Dockerfile
+    ports:
+      - "3002:3000"
+    depends_on:
+      - anchor
+    environment:
+      - NEXT_PUBLIC_SOLANA_RPC=http://anchor:8899
+    networks:
+      - localnet
+
+networks:
+  localnet:
+    driver: bridge
