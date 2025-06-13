@@ -1,6 +1,7 @@
 [workspace]
 members = [
-    "programs/*"
+    "programs/*",
+    "api/rust/"
 ]
 resolver = "2"
 
