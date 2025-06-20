@@ -8,6 +8,7 @@ on:
 permissions:
   contents: read
   actions: read
+  packages: read
 
 jobs:
   deploy:
@@ -37,11 +38,11 @@ jobs:
       - name: Set Solana cluster to devnet
         run: solana config set --url https://api.devnet.solana.com
 
-      - name: Airdrop 2 SOL to deploy key
-        run: solana airdrop 2
-
       - name: Anchor Build
         run: anchor build
+
+      - name: Airdrop 2 SOL to deploy key
+        run: solana airdrop 2
 
       - name: Anchor Deploy
         run: anchor deploy --provider.cluster devnet
