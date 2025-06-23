@@ -41,8 +41,8 @@ jobs:
       - name: Anchor Build
         run: anchor build
 
-      - name: Airdrop 2 SOL to deploy key
-        run: solana airdrop 2
+      - name: Airdrop 5 SOL to deploy key
+        run: solana airdrop 5
 
       - name: Anchor Deploy
         run: anchor deploy --provider.cluster devnet
