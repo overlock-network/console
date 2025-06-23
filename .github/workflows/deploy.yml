@@ -1,0 +1,47 @@
+name: Deploy Programs
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/overlock-network/anchor:v0.31.1
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Set default Rust toolchain
+        run: rustup default stable
+
+      - name: Set up deploy keypair
+        run: |
+          mkdir -p ~/.config/solana
+          echo "${{ secrets.DEPLOY_KEYPAIR }}" > ~/.config/solana/id.json
+
+      - name: Set Solana cluster to devnet
+        run: solana config set --url https://api.devnet.solana.com
+
+      - name: Airdrop 2 SOL to deploy key
+        run: solana airdrop 2
+
+      - name: Anchor Build
+        run: anchor build
+
+      - name: Anchor Deploy
+        run: anchor deploy --provider.cluster devnet
