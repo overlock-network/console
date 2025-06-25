@@ -34,11 +34,13 @@ export function DataTable<T extends object>({
   data,
   isLoading,
   elementPath,
+  onRowClick,
 }: {
   columns: ColumnDef<T>[];
   data: T[];
   isLoading: boolean;
   elementPath?: string;
+  onRowClick?: (row: T) => void;
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -76,18 +78,16 @@ export function DataTable<T extends object>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -106,12 +106,15 @@ export function DataTable<T extends object>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className={elementPath ? "cursor-pointer" : ""}
+                  className={elementPath || onRowClick ? "cursor-pointer" : ""}
                   onClick={() => {
-                    if (elementPath)
+                    if (onRowClick) {
+                      onRowClick(row.original);
+                    } else if (elementPath) {
                       router.push(
                         `${elementPath}/${row.getValue("publicKey")}`,
                       );
+                    }
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
