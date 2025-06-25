@@ -1,4 +1,4 @@
-name: Deploy Programs
+name: Deploy Programs and Console
 
 on:
   push:
@@ -6,13 +6,16 @@ on:
       - "v*"
 
 permissions:
-  contents: read
+  contents: write
+  pages: write
+  id-token: write
   actions: read
   packages: read
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    name: Build and Deploy Programs + Console
 
     container:
       image: ghcr.io/overlock-network/anchor:v0.31.1
@@ -26,6 +29,15 @@ jobs:
         with:
           fetch-depth: 0
           submodules: true
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Prepare Yarn 4
+        run: corepack prepare yarn@4.4.1 --activate
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Set default Rust toolchain
         run: rustup default stable
@@ -46,3 +58,12 @@ jobs:
 
       - name: Anchor Deploy
         run: anchor deploy --provider.cluster devnet
+
+      - name: Build Console (Next.js static export)
+        run: yarn next-build
+
+      - name: Deploy Console to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./app/out
