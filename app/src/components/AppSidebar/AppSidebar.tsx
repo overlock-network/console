@@ -15,7 +15,6 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { AccountMenu } from "@/components/AccountMenu";
-import { NetworkSelector } from "@/components/NetworkSelector";
 import { SolanaNetworkSelector } from "../SolanaNetworkSelector";
 
 const items = [
@@ -40,7 +39,6 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" side="left">
       <SidebarHeader>
-        <NetworkSelector />
         <SolanaNetworkSelector />
       </SidebarHeader>
       <SidebarContent>
