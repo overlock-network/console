@@ -39,7 +39,7 @@ export function SolanaNetworkSelector() {
                 </div>
                 <div className="text-md grid flex-1 text-left leading-tight">
                   <span className="truncate font-semibold">
-                    Overlock Studio
+                    Overlock Console
                   </span>
                   <span className="truncate text-xs">
                     {currentSolanaNetwork.name}
