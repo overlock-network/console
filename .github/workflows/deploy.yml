@@ -62,6 +62,9 @@ jobs:
       - name: Build Console (Next.js static export)
         run: yarn next-build
 
+      - name: Add CNAME file
+        run: echo "console.overlock.network" > ./app/out/CNAME
+
       - name: Deploy Console to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
