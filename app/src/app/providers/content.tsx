@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Spinner } from "@/components/Spinner";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -20,21 +20,29 @@ export default function Content() {
   );
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  const { anchorProvider } = useSolanaNetwork();
+  const { connection } = useSolanaNetwork();
+
+  const program = useMemo(() => {
+    return new Program<ProviderProgram>(idl, { connection });
+  }, [connection]);
 
   useEffect(() => {
-    if (anchorProvider) {
-      const program = new Program<ProviderProgram>(idl, anchorProvider);
-      setIsLoading(true);
-      program.account.provider
-        .all()
-        .then(setProviders)
-        .finally(() => setIsLoading(false));
-    }
-  }, [anchorProvider]);
+    if (!program) return;
+    setIsLoading(true);
+    program.account.provider
+      .all()
+      .then(setProviders)
+      .catch(() =>
+        toast({
+          title: "Error",
+          description: "Failed to fetch providers.",
+          variant: "destructive",
+        }),
+      )
+      .finally(() => setIsLoading(false));
+  }, [program]);
 
   const handleRowClick = async (provider: ProgramAccount<Provider>) => {
-    const program = new Program<ProviderProgram>(idl, anchorProvider);
     try {
       const data = await program.account.provider.fetch(provider.publicKey);
       setSelectedProvider(data);
