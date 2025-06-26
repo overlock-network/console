@@ -40,7 +40,6 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" side="left">
       <SidebarHeader>
-        <NetworkSelector />
         <SolanaNetworkSelector />
       </SidebarHeader>
       <SidebarContent>
