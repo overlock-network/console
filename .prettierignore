@@ -7,3 +7,4 @@ build
 test-ledger
 app/.next
 api
+app/out
