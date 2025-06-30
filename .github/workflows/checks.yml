@@ -25,14 +25,8 @@ jobs:
           fetch-depth: 0
           submodules: true
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Prepare Yarn 4
-        run: corepack prepare yarn@4.4.1 --activate
-
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci --legacy-peer-deps
 
       - name: Set default Rust toolchain
         run: rustup default stable
@@ -53,10 +47,10 @@ jobs:
         run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.ACCESS_TOKEN }}" > ~/.npmrc
 
       - name: Lint code
-        run: yarn next-lint
+        run: npm run next-lint
 
       - name: Check Prettier formatting
-        run: yarn format:check
+        run: npm run format:check
 
       - name: Build project
-        run: yarn next-build
+        run: npm run next-build

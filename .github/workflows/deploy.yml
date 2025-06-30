@@ -30,14 +30,8 @@ jobs:
           fetch-depth: 0
           submodules: true
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Prepare Yarn 4
-        run: corepack prepare yarn@4.4.1 --activate
-
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci --legacy-peer-deps
 
       - name: Set default Rust toolchain
         run: rustup default stable
@@ -60,7 +54,7 @@ jobs:
         run: anchor deploy --provider.cluster devnet
 
       - name: Build Console (Next.js static export)
-        run: yarn next-build
+        run: npm run next-build
 
       - name: Add CNAME file
         run: echo "console.overlock.network" > ./app/out/CNAME
