@@ -8,10 +8,11 @@ import type { Environment as EnvironmentProgram } from "@anchor/target/types/env
 import idl from "@anchor/target/idl/environment.json";
 import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
 import { Environment } from "@/lib/types";
+import { ConnectWallet } from "@/components/ConnectWallet";
 
 export default function Content() {
   const [tableData, setTableData] = useState<ProgramAccount<Environment>[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { anchorProvider } = useSolanaNetwork();
 
@@ -34,6 +35,10 @@ export default function Content() {
   useEffect(() => {
     fetchData();
   }, [anchorProvider]);
+
+  if (!anchorProvider) {
+    return <ConnectWallet entitiesName="environments" />;
+  }
 
   return (
     <>
