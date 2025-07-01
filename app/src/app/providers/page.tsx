@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function ProvidersListPage() {
   return (
     <Inset pageTitle={metadata.title as string}>
-      <div className="flex h-full flex-1 flex-col">
+      <div className="flex h-full items-center flex-col p-8 ">
         <Content />
       </div>
     </Inset>

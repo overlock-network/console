@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const ProviderTable = ({ providers, onSelect }: Props) => (
-  <div className="flex flex-col items-start justify-between gap-2 mb-8">
+  <div className="flex flex-col items-start justify-between gap-2 w-full">
     <h2 className="text-2xl font-bold tracking-tight">Providers</h2>
     <p className="text-muted-foreground">
       Here&apos;s a list of available providers!
