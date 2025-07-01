@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { listConfiguration } from "@/api/ConfigurationApi";
+import { listMarketplaceConfigurations } from "@/api/MarketplaceConfigurationApi";
 import {
   Pagination,
   PaginationContent,
@@ -41,9 +41,9 @@ export default function Content() {
   };
 
   useEffect(() => {
-    const fetchConfigurations = async () => {
+    const fetchMarketplaceConfigurations = async () => {
       setLoading(true);
-      const { nfts, totalCount } = await listConfiguration(
+      const { nfts, totalCount } = await listMarketplaceConfigurations(
         metaplexConnection,
         page,
         PAGE_SIZE,
@@ -53,7 +53,7 @@ export default function Content() {
       setLoading(false);
     };
 
-    fetchConfigurations();
+    fetchMarketplaceConfigurations();
   }, [page]);
 
   return (

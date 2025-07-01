@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Code, Container, LibraryBig } from "lucide-react";
+import { Store, Container, LibraryBig } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -19,9 +19,9 @@ import { SolanaNetworkSelector } from "../SolanaNetworkSelector";
 
 const items = [
   {
-    title: "Configurations",
-    url: "/configurations",
-    icon: Code,
+    title: "Marketplace",
+    url: "/marketplace",
+    icon: Store,
   },
   {
     title: "Environments",

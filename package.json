@@ -11,14 +11,14 @@
     "anchor-localnet": "anchor localnet",
     "anchor-test": "anchor test",
     "next-build": "cd app && next build",
-    "ci": "yarn next-build && yarn next-lint && yarn format:check",
+    "ci": "npm run next-build && npm run next-lint && npm run format:check",
     "next-dev": "cd app && next dev",
     "next-start": "cd app && npx serve@latest out",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "next-lint": "cd app && next lint",
-    "dev": "concurrently \"yarn anchor-localnet\" \"yarn next-dev\"",
-    "start": "concurrently \"yarn anchor-localnet\" \"yarn next-start\""
+    "dev": "concurrently \"npm run anchor-localnet\" \"npm run next-dev\"",
+    "start": "concurrently \"npm run anchor-localnet\" \"npm run next-start\""
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1",

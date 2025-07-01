@@ -2,7 +2,7 @@ import { Metaplex, Metadata } from "@metaplex-foundation/js";
 import { PublicKey } from "@solana/web3.js";
 import { NftData } from "@/lib/types";
 
-export async function listConfiguration(
+export async function listMarketplaceConfigurations(
   metaplex: Metaplex,
   page: number,
   pageSize = 20,
