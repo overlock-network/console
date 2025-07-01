@@ -20,7 +20,7 @@ export default function Content() {
   const [isLoading, setIsLoading] = useState(true);
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
   const { toast } = useToast();
-  const { connection } = useSolanaNetwork();
+  const { connection, currentSolanaNetwork } = useSolanaNetwork();
 
   const program = useMemo(() => {
     return new Program<ProviderProgram>(idl, { connection });
@@ -45,16 +45,26 @@ export default function Content() {
   if (isLoading) return <Spinner />;
 
   return (
-    <>
+    <div className="max-w-[1400px] w-full">
       {!selectedProvider ? (
         <>
-          <ProvidersMap
-            providers={providers}
-            hoveredCountry={hoveredCountry}
-            setHoveredCountry={setHoveredCountry}
-            onSelect={setSelectedProvider}
-          />
-          <div className="pl-8 pr-8 pb-8">
+          <div className="text-3xl font-bold mb-1">Network Capacity</div>
+          <div>
+            <span className="font-bold text-[#00cc66] text-xl">
+              {providers.filter((p) => p.account.availability).length}
+            </span>{" "}
+            active providers in {currentSolanaNetwork.name}
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="max-w-[800px] w-full">
+              <ProvidersMap
+                providers={providers}
+                hoveredCountry={hoveredCountry}
+                setHoveredCountry={setHoveredCountry}
+                onSelect={setSelectedProvider}
+              />
+            </div>
+
             <ProviderTable
               providers={providers}
               onSelect={setSelectedProvider}
@@ -62,13 +72,11 @@ export default function Content() {
           </div>
         </>
       ) : (
-        <div className="p-8">
-          <ProviderDetails
-            provider={selectedProvider}
-            onBack={() => setSelectedProvider(null)}
-          />
-        </div>
+        <ProviderDetails
+          provider={selectedProvider}
+          onBack={() => setSelectedProvider(null)}
+        />
       )}
-    </>
+    </div>
   );
 }
