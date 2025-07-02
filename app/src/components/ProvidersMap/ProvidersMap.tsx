@@ -136,14 +136,22 @@ export const ProvidersMap = ({
                       ${provider.account.availability ? "available" : "unavailable"} 
                       ${isHovered ? "hovered" : ""}
                     `}
-                      r={5 / zoom}
+                      r={6 / zoom}
                       style={{
                         strokeWidth: `${2 / zoom}`,
                       }}
                     />
                   </Marker>
                 </TooltipTrigger>
-                <TooltipContent side="right" align="center">
+                <TooltipContent
+                  side="right"
+                  align="center"
+                  className={
+                    provider.account.availability
+                      ? "bg-primary"
+                      : "bg-foreground text-background"
+                  }
+                >
                   {Object.entries(provider.account).map(([key, value]) => (
                     <div key={key}>
                       <b>{key}: </b>

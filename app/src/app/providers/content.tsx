@@ -50,7 +50,7 @@ export default function Content() {
         <>
           <div className="text-3xl font-bold mb-1">Network Capacity</div>
           <div>
-            <span className="font-bold text-[#00cc66] text-xl">
+            <span className="font-bold text-primary text-xl">
               {providers.filter((p) => p.account.availability).length}
             </span>{" "}
             active providers in {currentSolanaNetwork.name}

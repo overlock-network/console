@@ -61,6 +61,6 @@ export const providerColumns = (): ColumnDef<ProgramAccount<Provider>>[] => [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Available" />
     ),
-    cell: ({ row }) => (row.original.account.availability ? "✅ Yes" : "❌ No"),
+    cell: ({ row }) => (row.original.account.availability ? "Yes" : "No"),
   },
 ];
