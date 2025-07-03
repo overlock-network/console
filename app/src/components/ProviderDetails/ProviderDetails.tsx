@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import type { Provider } from "@/lib/types";
+import { formatKey } from "@/lib/utils";
 
 interface Props {
   provider: Provider;
@@ -9,9 +10,6 @@ interface Props {
 }
 
 export const ProviderDetails = ({ provider, onBack }: Props) => {
-  const formatKey = (key: string) =>
-    key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
-
   return (
     <div className="flex w-full justify-center">
       <div className="flex flex-col w-full max-w-3xl gap-6">

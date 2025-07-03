@@ -9,31 +9,30 @@ import idl from "@anchor/target/idl/environment.json";
 import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
 import { Environment } from "@/lib/types";
 import { ConnectWallet } from "@/components/ConnectWallet";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Content() {
   const [tableData, setTableData] = useState<ProgramAccount<Environment>[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
   const { anchorProvider } = useSolanaNetwork();
-
-  const fetchData = async () => {
-    if (anchorProvider) {
-      setIsLoading(true);
-      const program = new Program<EnvironmentProgram>(idl, anchorProvider);
-
-      program.account.environment
-        .all()
-        .then((res) => {
-          setTableData(res);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  };
+  const { toast } = useToast();
 
   useEffect(() => {
-    fetchData();
+    setIsLoading(true);
+
+    const program = new Program<EnvironmentProgram>(idl, anchorProvider);
+
+    program.account.environment
+      .all()
+      .then((res) => setTableData(res))
+      .catch(() =>
+        toast({
+          title: "Error",
+          description: "Failed to fetch environments.",
+          variant: "destructive",
+        }),
+      )
+      .finally(() => setIsLoading(false));
   }, [anchorProvider]);
 
   if (!anchorProvider) {

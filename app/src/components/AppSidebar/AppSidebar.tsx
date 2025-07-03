@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Store, Container, LibraryBig } from "lucide-react";
+import { Store, Container, LibraryBig, SquareStack } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -32,6 +32,11 @@ const items = [
     title: "Providers",
     url: "/providers",
     icon: LibraryBig,
+  },
+  {
+    title: "Resources",
+    url: "/resources",
+    icon: SquareStack,
   },
 ];
 
