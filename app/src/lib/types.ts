@@ -2,6 +2,7 @@ import { IdlAccounts } from "@coral-xyz/anchor";
 import { overlock } from "@overlocknetwork/api";
 import type { Environment as EnvironmentProgram } from "@anchor/target/types/environment";
 import type { Provider as ProviderProgram } from "@anchor/target/types/provider";
+import { V1ObjectMeta } from "@kubernetes/client-node";
 
 export type Cluster = "devnet" | "testnet" | "mainnet-beta" | "localnet";
 export type SolanaNetwork = { name: Cluster; icon: React.ElementType };
@@ -104,3 +105,50 @@ export interface NftData {
 export type Provider = IdlAccounts<ProviderProgram>["provider"];
 
 export type Environment = IdlAccounts<EnvironmentProgram>["environment"];
+
+export interface CompositeResourceDefinitionVersion {
+  name: string;
+  served: boolean;
+  storage: boolean;
+}
+
+export interface CompositeResourceDefinitionSpecNames {
+  kind: string;
+  plural: string;
+}
+
+export interface CompositeResourceDefinitionSpec {
+  names: CompositeResourceDefinitionSpecNames;
+  group: string;
+  versions: CompositeResourceDefinitionVersion[];
+}
+
+export interface CompositeResourceDefinition {
+  apiVersion: string;
+  kind: string;
+  metadata: V1ObjectMeta;
+  spec: CompositeResourceDefinitionSpec;
+}
+
+export interface KubernetesListResponse<T> {
+  apiVersion: string;
+  kind: string;
+  metadata: V1ObjectMeta;
+  items: T[];
+}
+
+export interface K8sMetadata {
+  name?: string;
+}
+
+export interface K8sObject {
+  metadata: K8sMetadata;
+}
+
+export interface Resource {
+  kind: string;
+  group: string;
+  version: string;
+  plural: string;
+  resource: string;
+}

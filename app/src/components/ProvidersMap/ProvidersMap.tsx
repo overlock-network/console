@@ -6,7 +6,7 @@ import {
   ZoomableGroup,
 } from "react-simple-maps";
 import { useState } from "react";
-import { countryCoordinates } from "@/lib/utils";
+import { countryCoordinates, formatKey } from "@/lib/utils";
 import {
   Tooltip,
   TooltipContent,
@@ -154,7 +154,7 @@ export const ProvidersMap = ({
                 >
                   {Object.entries(provider.account).map(([key, value]) => (
                     <div key={key}>
-                      <b>{key}: </b>
+                      <b>{formatKey(key)}: </b>
                       {String(value)}
                       <br />
                     </div>

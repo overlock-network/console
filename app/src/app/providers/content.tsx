@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Spinner } from "@/components/Spinner";
 import { useToast } from "@/hooks/use-toast";
 import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
@@ -22,12 +22,11 @@ export default function Content() {
   const { toast } = useToast();
   const { connection, currentSolanaNetwork } = useSolanaNetwork();
 
-  const program = useMemo(() => {
-    return new Program<ProviderProgram>(idl, { connection });
-  }, [connection]);
-
   useEffect(() => {
+    const program = new Program<ProviderProgram>(idl, { connection });
+
     if (!program) return;
+
     setIsLoading(true);
     program.account.provider
       .all()
@@ -40,7 +39,7 @@ export default function Content() {
         }),
       )
       .finally(() => setIsLoading(false));
-  }, [program]);
+  }, [connection]);
 
   if (isLoading) return <Spinner />;
 
