@@ -130,21 +130,6 @@ export interface CompositeResourceDefinition {
   spec: CompositeResourceDefinitionSpec;
 }
 
-export interface KubernetesListResponse<T> {
-  apiVersion: string;
-  kind: string;
-  metadata: V1ObjectMeta;
-  items: T[];
-}
-
-export interface K8sMetadata {
-  name?: string;
-}
-
-export interface K8sObject {
-  metadata: K8sMetadata;
-}
-
 export interface Resource {
   kind: string;
   group: string;
