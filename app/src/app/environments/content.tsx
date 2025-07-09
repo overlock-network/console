@@ -16,11 +16,12 @@ export default function Content() {
   const [isLoading, setIsLoading] = useState(false);
   const { anchorProvider } = useSolanaNetwork();
   const { toast } = useToast();
+  const { connection } = useSolanaNetwork();
 
   useEffect(() => {
     setIsLoading(true);
 
-    const program = new Program<EnvironmentProgram>(idl, anchorProvider);
+    const program = new Program<EnvironmentProgram>(idl, { connection });
 
     program.account.environment
       .all()
