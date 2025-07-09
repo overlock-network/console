@@ -12,10 +12,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { AccountMenu } from "@/components/AccountMenu";
 import { SolanaNetworkSelector } from "../SolanaNetworkSelector";
-import { Button } from "../ui/button";
 import Link from "next/link";
 import {
   CirclePlus,
@@ -24,6 +24,7 @@ import {
   SquareStack,
   Store,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const items = [
   {
@@ -49,6 +50,8 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { leftSidebar } = useSidebar();
+
   return (
     <Sidebar collapsible="icon" side="left">
       <SidebarHeader>
@@ -61,9 +64,14 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <Link href="/create">
-                  <Button className="mb-5 w-full">
+                  <SidebarMenuButton
+                    className={cn(
+                      "mb-5 w-full bg-primary",
+                      leftSidebar.open && "justify-center",
+                    )}
+                  >
                     <CirclePlus /> Create
-                  </Button>
+                  </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
               {items.map((item) => (
