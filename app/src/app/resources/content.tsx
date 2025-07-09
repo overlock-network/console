@@ -20,15 +20,8 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { listResources } from "@/api/ResourcesApi";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { TokenDialog } from "@/components/TokenDialog";
+import { ENV_TOKEN } from "@/lib/utils";
 
 export default function Content() {
   const [environments, setEnvironments] = useState<
@@ -42,9 +35,22 @@ export default function Content() {
     Provider | undefined
   >();
   const [token, setToken] = useState("");
-  const [tempToken, setTempToken] = useState("");
   const { anchorProvider } = useSolanaNetwork();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem(ENV_TOKEN);
+    if (stored) {
+      setToken(stored);
+    }
+  }, []);
+
+  const handleSelectEnvironment = (value: string) => {
+    setSelectedEnv(value);
+    if (!token) {
+      setDialogOpen(true);
+    }
+  };
 
   useEffect(() => {
     if (!anchorProvider) return;
@@ -102,14 +108,17 @@ export default function Content() {
     if (environmentProvider && token.length) {
       setIsLoading(true);
       listResources(environmentProvider, token)
-        .then(setTableData)
-        .catch(() =>
+        .then((resources) => {
+          setTableData(resources);
+          sessionStorage.setItem("k8s_token", token);
+        })
+        .catch(() => {
           toast({
             title: "Error",
             description: "Failed to fetch resources.",
             variant: "destructive",
-          }),
-        )
+          });
+        })
         .finally(() => setIsLoading(false));
     }
   }, [environmentProvider, token]);
@@ -132,10 +141,7 @@ export default function Content() {
           </div>
           <Select
             value={selectedEnv ?? ""}
-            onValueChange={(value) => {
-              setSelectedEnv(value);
-              setDialogOpen(true);
-            }}
+            onValueChange={handleSelectEnvironment}
           >
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select environment" />
@@ -149,6 +155,9 @@ export default function Content() {
                   {env.account.name ?? env.publicKey.toBase58()}
                 </SelectItem>
               ))}
+              {!environments.length && (
+                <span className="text-xs pl-2">environments not found</span>
+              )}
             </SelectContent>
           </Select>
         </div>
@@ -159,35 +168,13 @@ export default function Content() {
           isLoading={isLoading}
         />
       </div>
-      <Dialog open={dialogOpen}>
-        <DialogContent className="[&>button]:hidden">
-          <DialogHeader>
-            <DialogTitle>Set Kubernetes Token</DialogTitle>
-          </DialogHeader>
-          <p
-            id="token-dialog-description"
-            className="text-sm text-muted-foreground mb-2"
-          >
-            Paste your Kubernetes Bearer token to access cluster resources.
-          </p>
-          <Input
-            type="text"
-            placeholder="Enter Bearer token..."
-            value={tempToken}
-            onChange={(e) => setTempToken(e.target.value)}
-          />
-          <DialogFooter>
-            <Button
-              onClick={() => {
-                setToken(tempToken);
-                setDialogOpen(false);
-              }}
-            >
-              Save
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
+      <TokenDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        token={token}
+        setToken={setToken}
+      />
     </>
   );
 }

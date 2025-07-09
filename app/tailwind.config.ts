@@ -6,6 +6,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/react-checkbox-tree/lib/react-checkbox-tree.css",
+    "node_modules/@rjsf/shadcn/src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {

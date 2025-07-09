@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Store, Container, LibraryBig, SquareStack } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +15,15 @@ import {
 } from "@/components/ui/sidebar";
 import { AccountMenu } from "@/components/AccountMenu";
 import { SolanaNetworkSelector } from "../SolanaNetworkSelector";
+import { Button } from "../ui/button";
+import Link from "next/link";
+import {
+  CirclePlus,
+  Container,
+  LibraryBig,
+  SquareStack,
+  Store,
+} from "lucide-react";
 
 const items = [
   {
@@ -51,6 +59,13 @@ export function AppSidebar() {
           <SidebarSeparator className="mb-2" />
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <Link href="/create">
+                  <Button className="mb-5 w-full">
+                    <CirclePlus /> Create
+                  </Button>
+                </Link>
+              </SidebarMenuItem>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>

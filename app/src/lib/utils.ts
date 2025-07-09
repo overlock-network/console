@@ -8,6 +8,8 @@ export function cn(...inputs: ClassValue[]) {
 export const formatKey = (key: string) =>
   key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
 
+export const ENV_TOKEN = "env_token";
+
 export const countryCoordinates: Record<string, [number, number]> = {
   Afghanistan: [67.709953, 33.93911],
   Albania: [20.1683, 41.1533],

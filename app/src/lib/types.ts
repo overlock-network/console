@@ -3,6 +3,7 @@ import { overlock } from "@overlocknetwork/api";
 import type { Environment as EnvironmentProgram } from "@anchor/target/types/environment";
 import type { Provider as ProviderProgram } from "@anchor/target/types/provider";
 import { V1ObjectMeta } from "@kubernetes/client-node";
+import { RJSFSchema } from "@rjsf/utils";
 
 export type Cluster = "devnet" | "testnet" | "mainnet-beta" | "localnet";
 export type SolanaNetwork = { name: Cluster; icon: React.ElementType };
@@ -110,6 +111,7 @@ export interface CompositeResourceDefinitionVersion {
   name: string;
   served: boolean;
   storage: boolean;
+  schema: RJSFSchema;
 }
 
 export interface CompositeResourceDefinitionSpecNames {

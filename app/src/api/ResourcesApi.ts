@@ -4,22 +4,20 @@ import {
   KubernetesObject,
   KubernetesListObject,
 } from "@kubernetes/client-node";
+import { RJSFSchema } from "@rjsf/utils";
 
-export async function listResources(
+export async function listXrds(
   provider: Provider,
-  token: string
-): Promise<Resource[]> {
-  const result: Resource[] = [];
-
-  const baseUrl = `https://${provider.ip}:${provider.port}`;
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    Accept: "application/json",
-  };
-
+  token: string,
+): Promise<CompositeResourceDefinition[]> {
   const xrdRes = await fetch(
-    `${baseUrl}/apis/apiextensions.crossplane.io/v1/compositeresourcedefinitions`,
-    { headers }
+    `https://${provider.ip}:${provider.port}/apis/apiextensions.crossplane.io/v1/compositeresourcedefinitions`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+    },
   );
 
   if (!xrdRes.ok) {
@@ -28,8 +26,18 @@ export async function listResources(
 
   const xrdData: KubernetesListObject<CompositeResourceDefinition> =
     await xrdRes.json();
+  return xrdData.items;
+}
 
-  for (const item of xrdData.items) {
+export async function listResources(
+  provider: Provider,
+  token: string,
+): Promise<Resource[]> {
+  const result: Resource[] = [];
+
+  const xrdData = await listXrds(provider, token);
+
+  for (const item of xrdData) {
     const kind = item.spec.names.kind;
     const plural = item.spec.names.plural;
     const group = item.spec.group;
@@ -39,8 +47,13 @@ export async function listResources(
 
     try {
       const res = await fetch(
-        `${baseUrl}/apis/${group}/${version}/${plural}`,
-        { headers }
+        `https://${provider.ip}:${provider.port}/apis/${group}/${version}/${plural}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        },
       );
 
       if (!res.ok) {
@@ -68,4 +81,50 @@ export async function listResources(
   }
 
   return result;
+}
+
+export async function createResource(
+  provider: Provider,
+  token: string,
+  xrd: CompositeResourceDefinition,
+  formData: RJSFSchema,
+): Promise<void> {
+  const group = xrd.spec.group;
+  const version = xrd.spec.versions[0].name;
+  const kind = xrd.spec.names.kind;
+  const plural = xrd.spec.names.plural;
+
+  const name = formData?.metadata?.name ?? formData?.spec?.name;
+
+  if (!name) throw new Error("Resource name is required");
+
+  const metadata = {
+    ...(formData?.metadata || {}),
+    name,
+  };
+
+  const body = {
+    apiVersion: `${group}/${version}`,
+    kind,
+    metadata,
+    ...formData,
+  };
+
+  const response = await fetch(
+    `https://${provider.ip}:${provider.port}/apis/${group}/${version}/${plural}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    },
+  );
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text);
+  }
 }
