@@ -6,5 +6,5 @@ dist
 build
 test-ledger
 app/.next
-api
+/api
 app/out

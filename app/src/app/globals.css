@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@source "../node_modules/@rjsf/shadcn";
 
 @layer utilities {
   .text-balance {
@@ -121,6 +122,12 @@ html {
 .rct-checkbox .lucide * {
   width: 18px;
   height: 18px;
+}
+
+.rjsf-field {
+  .gap-2 {
+    gap: 1rem;
+  }
 }
 
 @layer base {
