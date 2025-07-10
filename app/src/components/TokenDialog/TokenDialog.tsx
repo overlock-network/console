@@ -9,22 +9,31 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSessionToken } from "@/hooks/use-session-token";
+import { ENV_TOKEN } from "@/lib/utils";
 
-interface TokenDialogProps {
-  open: boolean;
-  onClose: () => void;
-  token: string;
-  setToken: (token: string) => void;
-}
+export function TokenDialog() {
+  const { token, setToken } = useSessionToken(ENV_TOKEN);
+  const [tempToken, setTempToken] = useState(token);
+  const [open, setOpen] = useState(false);
 
-export function TokenDialog({
-  open,
-  onClose,
-  token,
-  setToken,
-}: TokenDialogProps) {
-  const [tempToken, setTempToken] = useState(token ?? "");
+  useEffect(() => {
+    if (!token) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+    setTempToken(token);
+  }, [token]);
+
+  const handleSave = () => {
+    if (tempToken.trim() === "") {
+      return;
+    }
+    setToken(tempToken);
+    setOpen(false);
+  };
 
   return (
     <Dialog open={open}>
@@ -42,15 +51,7 @@ export function TokenDialog({
           onChange={(e) => setTempToken(e.target.value)}
         />
         <DialogFooter>
-          <Button
-            onClick={() => {
-              setToken(tempToken);
-              sessionStorage.setItem("k8s_token", tempToken);
-              onClose();
-            }}
-          >
-            Save
-          </Button>
+          <Button onClick={handleSave}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

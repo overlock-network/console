@@ -1,47 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Spinner } from "@/components/Spinner";
-import { useToast } from "@/hooks/use-toast";
 import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
-import idl from "@anchor/target/idl/provider.json";
-import type { Provider as ProviderProgram } from "@anchor/target/types/provider";
-import type { Provider } from "@/lib/types";
-import { Program, ProgramAccount } from "@coral-xyz/anchor";
-import { ProvidersMap } from "../../components/ProvidersMap";
-import { ProviderDetails } from "../../components/ProviderDetails";
-import { ProviderTable } from "../../components/ProviderTable";
+import { ProvidersMap } from "@/components/ProvidersMap";
+import { ProviderDetails } from "@/components/ProviderDetails";
+import { ProviderTable } from "@/components/ProviderTable";
+import { useProviders } from "@/hooks/use-providers";
+import { ConnectWallet } from "@/components/ConnectWallet";
+import { Provider } from "@/lib/types";
+import { useState } from "react";
 
 export default function Content() {
-  const [providers, setProviders] = useState<ProgramAccount<Provider>[]>([]);
+  const { anchorProvider, currentSolanaNetwork } = useSolanaNetwork();
+  const { providers, isLoading } = useProviders();
   const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
     null,
   );
-  const [isLoading, setIsLoading] = useState(true);
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
-  const { toast } = useToast();
-  const { connection, currentSolanaNetwork } = useSolanaNetwork();
 
-  useEffect(() => {
-    const program = new Program<ProviderProgram>(idl, { connection });
+  if (!anchorProvider) {
+    return <ConnectWallet entitiesName="providers" />;
+  }
 
-    if (!program) return;
-
-    setIsLoading(true);
-    program.account.provider
-      .all()
-      .then(setProviders)
-      .catch(() =>
-        toast({
-          title: "Error",
-          description: "Failed to fetch providers.",
-          variant: "destructive",
-        }),
-      )
-      .finally(() => setIsLoading(false));
-  }, [connection]);
-
-  if (isLoading) return <Spinner />;
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="max-w-[1400px] w-full">

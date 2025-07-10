@@ -139,3 +139,10 @@ export interface Resource {
   plural: string;
   resource: string;
 }
+
+export type Key = {
+  name: string;
+  environment: string;
+  namespace: string;
+  data?: Record<string, string>;
+};
