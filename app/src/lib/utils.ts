@@ -10,6 +10,13 @@ export const formatKey = (key: string) =>
 
 export const ENV_TOKEN = "env_token";
 
+export const CROSSPLANE_LABEL_SELECTOR =
+  "console.overlock.network/secret=crossplane";
+
+export const CROSSPLANE_LABELS = {
+  "console.overlock.network/secret": "crossplane",
+};
+
 export const countryCoordinates: Record<string, [number, number]> = {
   Afghanistan: [67.709953, 33.93911],
   Albania: [20.1683, 41.1533],

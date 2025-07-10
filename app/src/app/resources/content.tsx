@@ -1,16 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { resourceColumns } from "@/components/ListTable/ResourceColumns";
 import { DataTable } from "@/components/ListTable/DataTable";
-import { useEffect, useState } from "react";
-import { Program, ProgramAccount } from "@coral-xyz/anchor";
-import type { Environment as EnvironmentProgram } from "@anchor/target/types/environment";
-import environmentIdl from "@anchor/target/idl/environment.json";
-import providerIdl from "@anchor/target/idl/provider.json";
 import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
-import { Environment, Provider, Resource } from "@/lib/types";
+import { useToast } from "@/hooks/use-toast";
 import { ConnectWallet } from "@/components/ConnectWallet";
-import type { Provider as ProviderProgram } from "@anchor/target/types/provider";
+import { TokenDialog } from "@/components/TokenDialog";
+import { useSessionToken } from "@/hooks/use-session-token";
+import { useEnvironments } from "@/hooks/use-environments";
+import { useProviders } from "@/hooks/use-providers";
+import { listResources } from "@/api/ResourcesApi";
+import { ENV_TOKEN } from "@/lib/utils";
+import { Resource } from "@/lib/types";
 import {
   Select,
   SelectContent,
@@ -18,110 +20,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { listResources } from "@/api/ResourcesApi";
-import { TokenDialog } from "@/components/TokenDialog";
-import { ENV_TOKEN } from "@/lib/utils";
 
 export default function Content() {
-  const [environments, setEnvironments] = useState<
-    ProgramAccount<Environment>[]
-  >([]);
-  const [selectedEnv, setSelectedEnv] = useState<string | undefined>(undefined);
-  const [tableData, setTableData] = useState<Resource[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [environmentProvider, setEnvironmentProvider] = useState<
-    Provider | undefined
-  >();
-  const [token, setToken] = useState("");
   const { anchorProvider } = useSolanaNetwork();
   const { toast } = useToast();
+  const { environments } = useEnvironments();
+  const { token } = useSessionToken(ENV_TOKEN);
+
+  const [selectedEnv, setSelectedEnv] = useState<string>();
+  const [resources, setResources] = useState<Resource[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const selectedEnvAccount = environments.find(
+    (env) => env.publicKey.toBase58() === selectedEnv,
+  );
+  const providerKey = selectedEnvAccount?.account.provider;
+  const { provider } = useProviders(providerKey);
 
   useEffect(() => {
-    const stored = sessionStorage.getItem(ENV_TOKEN);
-    if (stored) {
-      setToken(stored);
-    }
-  }, []);
+    if (!provider || !token || !selectedEnvAccount) return;
 
-  const handleSelectEnvironment = (value: string) => {
-    setSelectedEnv(value);
-    if (!token) {
-      setDialogOpen(true);
-    }
-  };
+    setIsLoading(true);
 
-  useEffect(() => {
-    if (!anchorProvider) return;
-
-    const environmentProgram = new Program<EnvironmentProgram>(
-      environmentIdl,
-      anchorProvider,
-    );
-
-    environmentProgram.account.environment
-      .all()
-      .then((envs) => {
-        setEnvironments(envs);
+    listResources(provider.account, token)
+      .then((data) => {
+        setResources(data);
       })
       .catch(() =>
         toast({
           title: "Error",
-          description: "Failed to fetch environments.",
+          description: "Failed to fetch resources.",
           variant: "destructive",
         }),
-      );
-  }, [anchorProvider]);
-
-  useEffect(() => {
-    setIsLoading(false);
-    if (!selectedEnv || !anchorProvider) {
-      setTableData([]);
-      return;
-    }
-
-    setIsLoading(true);
-
-    const providerProgram = new Program<ProviderProgram>(
-      providerIdl,
-      anchorProvider,
-    );
-
-    const env = environments.find(
-      (e) => e.publicKey.toBase58() === selectedEnv,
-    );
-    if (!env) {
-      setTableData([]);
-      setIsLoading(false);
-      return;
-    }
-
-    const providerPubkey = env.account.provider;
-
-    providerProgram.account.provider
-      .fetch(providerPubkey)
-      .then(setEnvironmentProvider);
-  }, [selectedEnv, anchorProvider, environments]);
-
-  useEffect(() => {
-    if (environmentProvider && token.length) {
-      setIsLoading(true);
-      listResources(environmentProvider, token)
-        .then((resources) => {
-          setTableData(resources);
-          sessionStorage.setItem("k8s_token", token);
-        })
-        .catch(() => {
-          toast({
-            title: "Error",
-            description: "Failed to fetch resources.",
-            variant: "destructive",
-          });
-        })
-        .finally(() => setIsLoading(false));
-    }
-  }, [environmentProvider, token]);
+      )
+      .finally(() => setIsLoading(false));
+  }, [provider, token, selectedEnvAccount, toast]);
 
   if (!anchorProvider) {
     return <ConnectWallet entitiesName="resources" />;
@@ -139,23 +72,21 @@ export default function Content() {
               Here&apos;s a list of available resources!
             </p>
           </div>
-          <Select
-            value={selectedEnv ?? ""}
-            onValueChange={handleSelectEnvironment}
-          >
+          <Select value={selectedEnv ?? ""} onValueChange={setSelectedEnv}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select environment" />
             </SelectTrigger>
             <SelectContent>
-              {environments.map((env) => (
-                <SelectItem
-                  key={env.publicKey.toBase58()}
-                  value={env.publicKey.toBase58()}
-                >
-                  {env.account.name ?? env.publicKey.toBase58()}
-                </SelectItem>
-              ))}
-              {!environments.length && (
+              {environments.length > 0 ? (
+                environments.map((env) => (
+                  <SelectItem
+                    key={env.publicKey.toBase58()}
+                    value={env.publicKey.toBase58()}
+                  >
+                    {env.account.name ?? env.publicKey.toBase58()}
+                  </SelectItem>
+                ))
+              ) : (
                 <span className="text-xs pl-2">environments not found</span>
               )}
             </SelectContent>
@@ -164,17 +95,12 @@ export default function Content() {
 
         <DataTable<Resource>
           columns={resourceColumns()}
-          data={tableData}
+          data={resources}
           isLoading={isLoading}
         />
       </div>
 
-      <TokenDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        token={token}
-        setToken={setToken}
-      />
+      <TokenDialog />
     </>
   );
 }

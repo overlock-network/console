@@ -1,5 +1,9 @@
-import type { Provider, Resource } from "@/lib/types";
-import type { CompositeResourceDefinition } from "@/lib/types";
+import type {
+  Provider,
+  Resource,
+  Key,
+  CompositeResourceDefinition,
+} from "@/lib/types";
 import {
   KubernetesObject,
   KubernetesListObject,
@@ -126,5 +130,164 @@ export async function createResource(
   if (!response.ok) {
     const text = await response.text();
     throw new Error(text);
+  }
+}
+
+export async function listKeys(
+  provider: Provider,
+  token: string,
+  label: string,
+): Promise<KubernetesObject[]> {
+  const url = `https://${provider.ip}:${provider.port}/api/v1/secrets?labelSelector=${label}`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch keys: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const data: KubernetesListObject<KubernetesObject> = await response.json();
+  return data.items;
+}
+
+export async function createKey(
+  provider: Provider,
+  token: string,
+  namespace: string,
+  name: string,
+  data: Record<string, string>,
+  labels?: Record<string, string>,
+): Promise<void> {
+  const url = `https://${provider.ip}:${provider.port}/api/v1/namespaces/${namespace}/secrets`;
+
+  const body = {
+    apiVersion: "v1",
+    kind: "Secret",
+    metadata: {
+      name,
+      namespace,
+      labels: {
+        ...labels,
+      },
+    },
+    type: "Opaque",
+    data: Object.entries(data).reduce<Record<string, string>>(
+      (acc, [key, value]) => {
+        acc[key] = btoa(value);
+        return acc;
+      },
+      {},
+    ),
+  };
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(
+      `Failed to create key: ${response.status} ${response.statusText}, ${text}`,
+    );
+  }
+}
+
+export async function removeKey(
+  provider: Provider,
+  token: string,
+  namespace: string,
+  name: string,
+): Promise<void> {
+  const url = `https://${provider.ip}:${provider.port}/api/v1/namespaces/${namespace}/secrets/${name}`;
+
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(
+      `Failed to delete key: ${response.status} ${response.statusText}, ${text}`,
+    );
+  }
+}
+
+export async function updateKeyData(
+  provider: Provider,
+  token: string,
+  key: Key,
+  newData: Record<string, string>,
+): Promise<void> {
+  const url = `https://${provider.ip}:${provider.port}/api/v1/namespaces/${key.namespace}/secrets/${key.name}`;
+
+  const getResponse = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+  });
+
+  if (!getResponse.ok) {
+    const text = await getResponse.text();
+    throw new Error(
+      `Failed to fetch key: ${getResponse.status} ${getResponse.statusText}, ${text}`,
+    );
+  }
+
+  const existingKey: KubernetesObject & {
+    data?: Record<string, string>;
+    metadata: {
+      name: string;
+      namespace: string;
+      labels?: Record<string, string>;
+    };
+    type: string;
+  } = await getResponse.json();
+
+  const updatedData = Object.entries(newData).reduce<Record<string, string>>(
+    (acc, [key, value]) => {
+      acc[key] = btoa(value);
+      return acc;
+    },
+    {},
+  );
+
+  const updatedKey = {
+    ...existingKey,
+    data: updatedData,
+  };
+
+  const putResponse = await fetch(url, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updatedKey),
+  });
+
+  if (!putResponse.ok) {
+    const text = await putResponse.text();
+    throw new Error(
+      `Failed to update key: ${putResponse.status} ${putResponse.statusText}, ${text}`,
+    );
   }
 }

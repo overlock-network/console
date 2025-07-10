@@ -2,39 +2,15 @@
 
 import { environmentColumns } from "@/components/ListTable/EnvironmentColumns";
 import { DataTable } from "@/components/ListTable/DataTable";
-import { useEffect, useState } from "react";
-import { Program, ProgramAccount } from "@coral-xyz/anchor";
-import type { Environment as EnvironmentProgram } from "@anchor/target/types/environment";
-import idl from "@anchor/target/idl/environment.json";
-import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
-import { Environment } from "@/lib/types";
+import { useEnvironments } from "@/components/EnvironmentsProvider";
 import { ConnectWallet } from "@/components/ConnectWallet";
-import { useToast } from "@/hooks/use-toast";
+import { ProgramAccount } from "@coral-xyz/anchor";
+import { Environment } from "@/lib/types";
+import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
 
 export default function Content() {
-  const [tableData, setTableData] = useState<ProgramAccount<Environment>[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { environments, isLoading } = useEnvironments();
   const { anchorProvider } = useSolanaNetwork();
-  const { toast } = useToast();
-  const { connection } = useSolanaNetwork();
-
-  useEffect(() => {
-    setIsLoading(true);
-
-    const program = new Program<EnvironmentProgram>(idl, { connection });
-
-    program.account.environment
-      .all()
-      .then((res) => setTableData(res))
-      .catch(() =>
-        toast({
-          title: "Error",
-          description: "Failed to fetch environments.",
-          variant: "destructive",
-        }),
-      )
-      .finally(() => setIsLoading(false));
-  }, [anchorProvider]);
 
   if (!anchorProvider) {
     return <ConnectWallet entitiesName="environments" />;
@@ -52,7 +28,7 @@ export default function Content() {
       </div>
       <DataTable<ProgramAccount<Environment>>
         columns={environmentColumns()}
-        data={tableData}
+        data={environments}
         isLoading={isLoading}
       />
     </>

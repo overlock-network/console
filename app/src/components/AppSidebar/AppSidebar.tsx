@@ -20,6 +20,7 @@ import Link from "next/link";
 import {
   CirclePlus,
   Container,
+  KeyRound,
   LibraryBig,
   SquareStack,
   Store,
@@ -46,6 +47,11 @@ const items = [
     title: "Resources",
     url: "/resources",
     icon: SquareStack,
+  },
+  {
+    title: "Key Rings",
+    url: "/keyrings",
+    icon: KeyRound,
   },
 ];
 

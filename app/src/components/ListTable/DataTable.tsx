@@ -27,26 +27,22 @@ import { DataTablePagination } from "./Pagination";
 import { DataTableToolbar } from "./Toolbar";
 import { useState } from "react";
 import { Spinner } from "../Spinner";
-import { useRouter } from "next/navigation";
 
 export function DataTable<T extends object>({
   columns,
   data,
   isLoading,
-  elementPath,
   onRowClick,
 }: {
   columns: ColumnDef<T>[];
   data: T[];
   isLoading: boolean;
-  elementPath?: string;
   onRowClick?: (row: T) => void;
 }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const router = useRouter();
 
   const table = useReactTable({
     data,
@@ -106,14 +102,10 @@ export function DataTable<T extends object>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className={elementPath || onRowClick ? "cursor-pointer" : ""}
+                  className={onRowClick ? "cursor-pointer" : ""}
                   onClick={() => {
                     if (onRowClick) {
                       onRowClick(row.original);
-                    } else if (elementPath) {
-                      router.push(
-                        `${elementPath}/${row.getValue("publicKey")}`,
-                      );
                     }
                   }}
                 >
