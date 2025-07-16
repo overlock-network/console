@@ -49,39 +49,34 @@ export async function listResources(
 
     if (!version) continue;
 
-    try {
-      const res = await fetch(
-        `https://${provider.ip}:${provider.port}/apis/${group}/${version}/${plural}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
+    const res = await fetch(
+      `https://${provider.ip}:${provider.port}/apis/${group}/${version}/${plural}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
         },
-      );
+      },
+    );
 
-      if (!res.ok) {
-        console.warn(`Skipping ${kind}: fetch failed`);
-        continue;
-      }
-
-      const json: KubernetesListObject<KubernetesObject> = await res.json();
-
-      const resources: Resource[] = json.items
-        .map((i) => i.metadata?.name)
-        .filter((name): name is string => !!name)
-        .map((name) => ({
-          kind,
-          group,
-          version,
-          plural,
-          resource: name,
-        }));
-
-      result.push(...resources);
-    } catch (err) {
-      console.error(`Failed to fetch resources for ${kind}:`, err);
+    if (!res.ok) {
+      continue;
     }
+
+    const json: KubernetesListObject<KubernetesObject> = await res.json();
+
+    const resources: Resource[] = json.items
+      .map((i) => i.metadata?.name)
+      .filter((name): name is string => !!name)
+      .map((name) => ({
+        kind,
+        group,
+        version,
+        plural,
+        resource: name,
+      }));
+
+    result.push(...resources);
   }
 
   return result;

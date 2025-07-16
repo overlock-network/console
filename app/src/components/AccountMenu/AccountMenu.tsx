@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,26 +18,15 @@ import { ChevronsUpDown, Copy, LogOut, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
-import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { useWallet, useWalletModal } from "@/chain/client";
 
 export function AccountMenu() {
   const { toast } = useToast();
-  const { publicKey, disconnect, connected } = useWallet();
-  const { connection } = useConnection();
+  const { address, disconnect, connected, balance } = useWallet();
   const { setVisible } = useWalletModal();
   const router = useRouter();
 
-  const [balance, setBalance] = useState<number | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const fetchBalance = async () => {
-    if (publicKey) {
-      const lamports = await connection.getBalance(publicKey);
-      setBalance(lamports / LAMPORTS_PER_SOL);
-    }
-  };
 
   const handleDropdownOpenChange = (open: boolean) => {
     if (!connected) {
@@ -45,19 +34,14 @@ export function AccountMenu() {
       return;
     }
     setIsDropdownOpen(open);
-    if (open && publicKey) {
-      fetchBalance();
-    }
   };
 
   const handleCopyAddress = async () => {
-    await navigator.clipboard
-      .writeText(publicKey?.toString() || "")
-      .finally(() => {
-        toast({
-          title: "Address copied to clipboard",
-        });
+    await navigator.clipboard.writeText(address ?? "").finally(() => {
+      toast({
+        title: "Address copied to clipboard",
       });
+    });
   };
 
   return (
@@ -77,7 +61,7 @@ export function AccountMenu() {
                   className="text-ellipsis font-semibold whitespace-nowrap overflow-hidden text-left"
                   style={{ direction: "rtl" }}
                 >
-                  {!publicKey ? "Connect" : publicKey.toString()}
+                  {!address ? "Connect" : address}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -96,10 +80,10 @@ export function AccountMenu() {
                     className="text-ellipsis font-semibold whitespace-nowrap overflow-hidden text-left"
                     style={{ direction: "rtl" }}
                   >
-                    {publicKey?.toString()}
+                    {address}
                   </span>
                 </div>
-                {publicKey && (
+                {address && (
                   <Copy
                     width={15}
                     height={15}
@@ -114,9 +98,9 @@ export function AccountMenu() {
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableCell>SOL</TableCell>
+                    <TableCell>{balance?.denom}</TableCell>
                     <TableCell align="right">
-                      {balance !== null ? balance.toFixed(4) : "Loading..."}
+                      {balance !== null ? balance.amount : "Loading..."}
                     </TableCell>
                   </TableRow>
                 </TableBody>

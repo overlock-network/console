@@ -3,20 +3,15 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./ColumnHeader";
 import { Environment } from "@/lib/types";
-import { ProgramAccount } from "@coral-xyz/anchor";
 
-export const environmentColumns = (): ColumnDef<
-  ProgramAccount<Environment>
->[] => [
+export const environmentColumns = (): ColumnDef<Environment>[] => [
   {
-    accessorKey: "publicKey",
+    accessorKey: "id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ID" />
     ),
     cell: ({ row }) => (
-      <div className="w-[120px] truncate">
-        {row.original.publicKey.toBase58()}
-      </div>
+      <div className="w-[120px] truncate">{row.original.id}</div>
     ),
   },
   {
@@ -24,18 +19,14 @@ export const environmentColumns = (): ColumnDef<
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => (
-      <div className="truncate">{row.original.account.name}</div>
-    ),
+    cell: ({ row }) => <div className="truncate">{row.original.name}</div>,
   },
   {
     accessorKey: "owner",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Owner ID" />
     ),
-    cell: ({ row }) => (
-      <div className="truncate">{row.original.account.owner.toBase58()}</div>
-    ),
+    cell: ({ row }) => <div className="truncate">{row.original.ownerId}</div>,
   },
   {
     accessorKey: "provider",
@@ -43,7 +34,7 @@ export const environmentColumns = (): ColumnDef<
       <DataTableColumnHeader column={column} title="Provider ID" />
     ),
     cell: ({ row }) => (
-      <div className="truncate">{row.original.account.provider.toBase58()}</div>
+      <div className="truncate">{row.original.providerId}</div>
     ),
   },
 ];

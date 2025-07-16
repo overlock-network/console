@@ -1,10 +1,9 @@
 import { DataTable } from "@/components/ListTable/DataTable";
 import { providerColumns } from "@/components/ListTable/ProviderColumns";
 import type { Provider } from "@/lib/types";
-import type { ProgramAccount } from "@coral-xyz/anchor";
 
 interface Props {
-  providers: ProgramAccount<Provider>[];
+  providers: Provider[];
   onSelect: (provider: Provider) => void;
 }
 
@@ -14,11 +13,11 @@ export const ProviderTable = ({ providers, onSelect }: Props) => (
     <p className="text-muted-foreground">
       Here&apos;s a list of available providers!
     </p>
-    <DataTable<ProgramAccount<Provider>>
+    <DataTable<Provider>
       columns={providerColumns()}
       data={providers}
       isLoading={false}
-      onRowClick={(row) => onSelect(row.account)}
+      onRowClick={(row) => onSelect(row)}
     />
   </div>
 );

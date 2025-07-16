@@ -3,18 +3,15 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./ColumnHeader";
 import { Provider } from "@/lib/types";
-import { ProgramAccount } from "@coral-xyz/anchor";
 
-export const providerColumns = (): ColumnDef<ProgramAccount<Provider>>[] => [
+export const providerColumns = (): ColumnDef<Provider>[] => [
   {
-    accessorKey: "publicKey",
+    accessorKey: "id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Id" />
     ),
     cell: ({ row }) => (
-      <div className="w-[120px] truncate">
-        {row.original.publicKey.toBase58()}
-      </div>
+      <div className="w-[120px] truncate">{row.original.id}</div>
     ),
   },
   {
@@ -22,45 +19,41 @@ export const providerColumns = (): ColumnDef<ProgramAccount<Provider>>[] => [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => (
-      <div className="truncate">{row.original.account.name}</div>
-    ),
+    cell: ({ row }) => <div className="truncate">{row.original.name}</div>,
   },
   {
     accessorKey: "ip",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="IP" />
     ),
-    cell: ({ row }) => (
-      <div className="truncate">{row.original.account.ip}</div>
-    ),
+    cell: ({ row }) => <div className="truncate">{row.original.ip}</div>,
   },
   {
     accessorKey: "port",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Port" />
     ),
-    cell: ({ row }) => row.original.account.port,
+    cell: ({ row }) => row.original.port,
   },
   {
     accessorKey: "country",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Country" />
     ),
-    cell: ({ row }) => row.original.account.country,
+    cell: ({ row }) => row.original.country,
   },
   {
     accessorKey: "environmentType",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Environment" />
     ),
-    cell: ({ row }) => row.original.account.environmentType,
+    cell: ({ row }) => row.original.environmentType,
   },
   {
     accessorKey: "availability",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Available" />
     ),
-    cell: ({ row }) => (row.original.account.availability ? "Yes" : "No"),
+    cell: ({ row }) => (row.original.availability ? "Yes" : "No"),
   },
 ];

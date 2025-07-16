@@ -1,6 +1,8 @@
+"use client";
+
 import { Wallet } from "lucide-react";
 import { Button } from "../ui/button";
-import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+import { useWalletModal } from "@/chain/client";
 
 export const ConnectWallet = ({ entitiesName }: { entitiesName: string }) => {
   const { setVisible } = useWalletModal();

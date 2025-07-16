@@ -12,13 +12,12 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { ProgramAccount } from "@coral-xyz/anchor";
 import type { Provider } from "@/lib/types";
 import { Button } from "../ui/button";
 import { Minus, Plus, RotateCw } from "lucide-react";
 
 interface Props {
-  providers: ProgramAccount<Provider>[];
+  providers: Provider[];
   hoveredCountry: string | null;
   setHoveredCountry: (country: string | null) => void;
   onSelect: (provider: Provider) => void;
@@ -106,9 +105,9 @@ export const ProvidersMap = ({
                   onMouseEnter={() => setHoveredCountry(geo.properties.name)}
                   onClick={() => {
                     const match = providers.find(
-                      (p) => p.account.country === geo.properties.name,
+                      (p) => p.country === geo.properties.name,
                     );
-                    if (match) onSelect(match.account);
+                    if (match) onSelect(match);
                   }}
                 />
               ))
@@ -116,24 +115,22 @@ export const ProvidersMap = ({
           </Geographies>
 
           {providers.map((provider) => {
-            const coords = countryCoordinates[provider.account.country];
+            const coords = countryCoordinates[provider.country];
             if (!coords) return null;
-            const isHovered = hoveredCountry === provider.account.country;
+            const isHovered = hoveredCountry === provider.country;
 
             return (
-              <Tooltip key={provider.account.ip} open={isHovered}>
+              <Tooltip key={provider.ip} open={isHovered}>
                 <TooltipTrigger asChild>
                   <Marker
                     coordinates={coords}
-                    onMouseEnter={() =>
-                      setHoveredCountry(provider.account.country)
-                    }
+                    onMouseEnter={() => setHoveredCountry(provider.country)}
                     onMouseLeave={() => setHoveredCountry(null)}
-                    onClick={() => onSelect(provider.account)}
+                    onClick={() => onSelect(provider)}
                   >
                     <circle
                       className={`marker 
-                      ${provider.account.availability ? "available" : "unavailable"} 
+                      ${provider.availability ? "available" : "unavailable"} 
                       ${isHovered ? "hovered" : ""}
                     `}
                       r={6 / zoom}
@@ -147,12 +144,12 @@ export const ProvidersMap = ({
                   side="right"
                   align="center"
                   className={
-                    provider.account.availability
+                    provider.availability
                       ? "bg-primary"
                       : "bg-foreground text-background"
                   }
                 >
-                  {Object.entries(provider.account).map(([key, value]) => (
+                  {Object.entries(provider).map(([key, value]) => (
                     <div key={key}>
                       <b>{formatKey(key)}: </b>
                       {String(value)}

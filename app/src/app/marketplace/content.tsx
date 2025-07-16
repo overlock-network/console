@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { listMarketplaceConfigurations } from "@/api/MarketplaceConfigurationApi";
 import {
   Pagination,
   PaginationContent,
@@ -11,7 +10,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
 import { Spinner } from "@/components/Spinner";
 import { NftData } from "@/lib/types";
 
@@ -31,7 +29,6 @@ export default function Content() {
   const [loading, setLoading] = useState<boolean>(false);
   const [totalCount, setTotalCount] = useState<number>(0);
 
-  const { metaplexConnection } = useSolanaNetwork();
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   const handlePageChange = (newPage: number) => {
@@ -43,12 +40,12 @@ export default function Content() {
   useEffect(() => {
     const fetchMarketplaceConfigurations = async () => {
       setLoading(true);
-      const { nfts, totalCount } = await listMarketplaceConfigurations(
-        metaplexConnection,
-        page,
-        PAGE_SIZE,
-      );
-      setNfts(nfts);
+      // const { nfts, totalCount } = await listMarketplaceConfigurations(
+      //   metaplexConnection,
+      //   page,
+      //   PAGE_SIZE,
+      // );
+      setNfts([]);
       setTotalCount(totalCount);
       setLoading(false);
     };

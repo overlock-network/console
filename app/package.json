@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
+    "@keplr-wallet/types": "^0.12.251",
     "@kubernetes/client-node": "^1.0.0",
     "@metaplex-foundation/js": "^0.20.1",
     "@overlocknetwork/api": "^0.0.29-alpha.4",
@@ -35,6 +36,7 @@
     "asn1.js": "^5.4.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "interchain": "^1.10.4",
     "isomorphic-ws": "^5.0.0",
     "jotai": "^2.12.3",
     "lucide-react": "^0.468.0",

@@ -1,12 +1,14 @@
 "use client";
 
-import { WalletProvider } from "@solana/wallet-adapter-react";
-import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import {
+  WalletModalProviderWrapper,
+  WalletProviderWrapper,
+} from "@/chain/client";
 
 export function AppWalletProvider({ children }: { children: React.ReactNode }) {
   return (
-    <WalletProvider wallets={[]} autoConnect>
-      <WalletModalProvider>{children}</WalletModalProvider>
-    </WalletProvider>
+    <WalletProviderWrapper>
+      <WalletModalProviderWrapper>{children}</WalletModalProviderWrapper>
+    </WalletProviderWrapper>
   );
 }
