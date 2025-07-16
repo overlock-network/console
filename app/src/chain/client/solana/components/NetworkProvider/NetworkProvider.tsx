@@ -89,7 +89,7 @@ const NetworkProvider: React.FC<{ children: React.ReactNode }> = ({
     metaplexConnection === undefined
   ) {
     return (
-      <div className="flex h-[100vh] w-full justify-center items-center">
+      <div className="w-full flex h-screen items-center justify-center">
         <Spinner />
       </div>
     );

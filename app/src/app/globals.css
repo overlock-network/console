@@ -130,6 +130,10 @@ html {
   }
 }
 
+.h-screen {
+  height: 100vh;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -17,17 +17,28 @@ interface NetworkContextType {
 const NetworkContext = createContext<NetworkContextType | null>(null);
 
 const networks: Network[] = [
-  { name: "Local", icon: TestTubeDiagonal },
   { name: "Devnet", icon: Cog },
+  { name: "Local", icon: TestTubeDiagonal },
 ];
 
 const NetworkProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [currentNetwork, setCurrentNetwork] = useState<Network>(networks[0]);
   const [networkMeta, setNetworkMeta] = useState<NetworkMeta | null>(null);
   const [lcdClient, setLcdClient] = useState<LCDClient | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentNetwork, setCurrentNetwork] = useState<Network>(() => {
+    if (typeof window !== "undefined") {
+      const storedName = sessionStorage.getItem("currentNetwork");
+      const found = networks.find((n) => n.name === storedName);
+      return found ?? networks[0];
+    }
+    return networks[0];
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem("currentNetwork", currentNetwork.name);
+  }, [currentNetwork]);
 
   useEffect(() => {
     const loadNetworkData = async () => {
@@ -72,7 +83,7 @@ const NetworkProvider: React.FC<{ children: React.ReactNode }> = ({
 
   if (loading || !networkMeta || !lcdClient) {
     return (
-      <div className="w-full h-[100vh] flex items-center justify-center">
+      <div className="w-full flex h-screen items-center justify-center">
         <Spinner />
       </div>
     );
