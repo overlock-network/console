@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[110],{68110:(e,t,r)=>{r.d(t,{NameService:()=>s});class s{client;registry;constructor(e,t){this.client=e,this.registry=t}async resolveName(e){try{let{contract:t,getQueryMsg:r}=this.registry;return await this.client.queryContractSmart(t,r(e))}catch(e){console?.error(e);return}}}}}]);
