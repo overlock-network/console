@@ -2,17 +2,15 @@
 
 import { environmentColumns } from "@/components/ListTable/EnvironmentColumns";
 import { DataTable } from "@/components/ListTable/DataTable";
-import { useEnvironments } from "@/components/EnvironmentsProvider";
 import { ConnectWallet } from "@/components/ConnectWallet";
-import { ProgramAccount } from "@coral-xyz/anchor";
 import { Environment } from "@/lib/types";
-import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
+import { useWallet, useEnvironments } from "@/chain/client";
 
 export default function Content() {
   const { environments, isLoading } = useEnvironments();
-  const { anchorProvider } = useSolanaNetwork();
+  const { connected } = useWallet();
 
-  if (!anchorProvider) {
+  if (!connected) {
     return <ConnectWallet entitiesName="environments" />;
   }
 
@@ -26,7 +24,7 @@ export default function Content() {
           </p>
         </div>
       </div>
-      <DataTable<ProgramAccount<Environment>>
+      <DataTable<Environment>
         columns={environmentColumns()}
         data={environments}
         isLoading={isLoading}

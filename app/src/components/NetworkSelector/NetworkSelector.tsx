@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronsUpDown } from "lucide-react";
-import { useNetwork } from "../NetworkProvider";
+import { useNetwork } from "@/chain/client";
 
 export function NetworkSelector() {
   const sidebar = useSidebar();

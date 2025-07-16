@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
-import { useEnvironments } from "@/hooks/use-environments";
-import { useProviders } from "@/hooks/use-providers";
+import { useWallet, useEnvironments, useProviders } from "@/chain/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -24,33 +22,30 @@ import { withTheme } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
 import { ENV_TOKEN } from "@/lib/utils";
 import { useSessionToken } from "@/hooks/use-session-token";
-import { PublicKey } from "@solana/web3.js";
 
 const Form = withTheme(shadcnTheme);
 
 export default function Content() {
-  const { anchorProvider } = useSolanaNetwork();
   const { environments } = useEnvironments();
   const { toast } = useToast();
   const { token } = useSessionToken(ENV_TOKEN);
 
-  const [selectedEnv, setSelectedEnv] = useState<PublicKey>();
+  const [selectedEnv, setSelectedEnv] = useState<string>();
   const [xrds, setXrds] = useState<CompositeResourceDefinition[] | null>(null);
   const [selectedXrd, setSelectedXrd] = useState<CompositeResourceDefinition>();
   const [selectedVersion, setSelectedVersion] = useState<string>();
+  const { connected } = useWallet();
 
-  const selectedEnvAccount = environments.find(
-    (e) => e.publicKey.toBase58() === selectedEnv?.toBase58(),
-  );
+  const selectedEnvAccount = environments.find((e) => e.id === selectedEnv);
 
-  const providerKey = selectedEnvAccount?.account.provider;
-  const { provider } = useProviders(providerKey);
+  const providerId = selectedEnvAccount?.providerId;
+  const { provider } = useProviders(providerId);
 
   const versionSchema = selectedXrd?.spec.versions.find(
     (v) => v.name === selectedVersion,
   )?.schema.openAPIV3Schema as RJSFSchema | undefined;
 
-  const handleSelectEnvironment = (value: PublicKey) => {
+  const handleSelectEnvironment = (value: string) => {
     setSelectedEnv(value);
     setSelectedXrd(undefined);
     setSelectedVersion(undefined);
@@ -65,9 +60,8 @@ export default function Content() {
 
   const handleSubmit = async (data: IChangeEvent<RJSFSchema>) => {
     if (!selectedXrd || !token || !provider || !data.formData) return;
-
     try {
-      await createResource(provider.account, token, selectedXrd, data.formData);
+      await createResource(provider, token, selectedXrd, data.formData);
       toast({
         title: "Success",
         description: "Resource created successfully.",
@@ -84,7 +78,7 @@ export default function Content() {
   const fetchXrds = useCallback(async () => {
     if (!provider || !token || !selectedEnv) return;
     try {
-      const data = await listXrds(provider.account, token);
+      const data = await listXrds(provider, token);
       setXrds(data);
     } catch {
       toast({
@@ -99,7 +93,7 @@ export default function Content() {
     fetchXrds();
   }, [fetchXrds]);
 
-  if (!anchorProvider) {
+  if (!connected) {
     return <ConnectWallet entitiesName="resources" />;
   }
 
@@ -111,23 +105,22 @@ export default function Content() {
         </CardHeader>
         <CardContent className="grid sm:grid-cols-1 gap-5 xl:grid-cols-3">
           <Select
-            value={selectedEnv?.toBase58() ?? ""}
-            onValueChange={(value) =>
-              handleSelectEnvironment(new PublicKey(value))
-            }
+            value={selectedEnv ?? ""}
+            onValueChange={(value) => handleSelectEnvironment(value)}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select environment" />
             </SelectTrigger>
             <SelectContent>
-              {environments.map((env) => (
-                <SelectItem
-                  key={env.publicKey.toBase58()}
-                  value={env.publicKey.toBase58()}
-                >
-                  {env.account.name ?? env.publicKey.toBase58()}
-                </SelectItem>
-              ))}
+              {environments.length > 0 ? (
+                environments.map((env) => (
+                  <SelectItem key={env.id} value={env.id}>
+                    {env.name ?? env.id}
+                  </SelectItem>
+                ))
+              ) : (
+                <span className="text-xs pl-2">environments not found</span>
+              )}
             </SelectContent>
           </Select>
 

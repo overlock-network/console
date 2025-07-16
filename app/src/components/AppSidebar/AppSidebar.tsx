@@ -15,7 +15,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { AccountMenu } from "@/components/AccountMenu";
-import { SolanaNetworkSelector } from "../SolanaNetworkSelector";
+import { NetworkSelector } from "@/components/NetworkSelector";
 import Link from "next/link";
 import {
   CirclePlus,
@@ -61,7 +61,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" side="left">
       <SidebarHeader>
-        <SolanaNetworkSelector />
+        <NetworkSelector />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

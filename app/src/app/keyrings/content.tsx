@@ -3,7 +3,7 @@
 import { createKey, removeKey, updateKeyData } from "@/api/ResourcesApi";
 import { DataTable } from "@/components/ListTable/DataTable";
 import { keyColumns } from "@/components/ListTable/KeyColumns";
-import { useSolanaNetwork } from "@/components/SolanaNetworkProvider";
+import { useWallet, useEnvironments, useProviders } from "@/chain/client";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -21,30 +21,26 @@ import { CROSSPLANE_LABELS, ENV_TOKEN } from "@/lib/utils";
 import { AddKeyRingDialog } from "@/components/AddKeyRingDialog/AddKeyRingDialog";
 import { EditKeyCard } from "@/components/EditKeyCard";
 import { useSessionToken } from "@/hooks/use-session-token";
-import { useEnvironments } from "@/hooks/use-environments";
-import { useProviders } from "@/hooks/use-providers";
 import { ConnectWallet } from "@/components/ConnectWallet";
 import { useKeyRings } from "@/hooks/use-key-rings";
 
 export default function Content() {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const { anchorProvider } = useSolanaNetwork();
+  const { connected } = useWallet();
   const { toast } = useToast();
   const [selectedEnv, setSelectedEnv] = useState<string>();
   const { token } = useSessionToken(ENV_TOKEN);
   const [keyToEdit, setKeyToEdit] = useState<Key>();
   const { environments } = useEnvironments();
 
-  const selectedEnvironment = environments.find(
-    (e) => e.publicKey.toBase58() == selectedEnv,
-  );
-  const providerKey = selectedEnvironment?.account.provider;
+  const selectedEnvironment = environments.find((e) => e.id == selectedEnv);
+  const providerKey = selectedEnvironment?.providerId;
   const { provider: environmentProvider } = useProviders(providerKey);
 
   const { keyRings, fetchKeyRings, isLoading } = useKeyRings(
-    environmentProvider?.account,
+    environmentProvider,
     token,
-    selectedEnvironment?.account.name,
+    selectedEnvironment?.name,
   );
 
   useEffect(() => {
@@ -65,7 +61,7 @@ export default function Content() {
       );
 
       await createKey(
-        environmentProvider.account,
+        environmentProvider,
         token,
         data.namespace,
         data.keyName,
@@ -92,9 +88,8 @@ export default function Content() {
 
   const handleEditKey = async (data: Record<string, string>) => {
     if (!environmentProvider || !token || !keyToEdit) return;
-
     try {
-      await updateKeyData(environmentProvider.account, token, keyToEdit, data);
+      await updateKeyData(environmentProvider, token, keyToEdit, data);
       toast({
         title: "Success",
         description: "Key updated successfully.",
@@ -113,14 +108,8 @@ export default function Content() {
 
   const handleDeleteKey = async (row: Key) => {
     if (!environmentProvider || !token) return;
-
     try {
-      await removeKey(
-        environmentProvider.account,
-        token,
-        row.namespace,
-        row.name,
-      );
+      await removeKey(environmentProvider, token, row.namespace, row.name);
       toast({
         title: "Success",
         description: `Key Ring "${row.name}" deleted successfully.`,
@@ -137,7 +126,7 @@ export default function Content() {
 
   const handleRowClick = (key: Key) => setKeyToEdit(key);
 
-  if (!anchorProvider) {
+  if (!connected) {
     return <ConnectWallet entitiesName="resources" />;
   }
 
@@ -175,14 +164,15 @@ export default function Content() {
                   <SelectValue placeholder="Select environment" />
                 </SelectTrigger>
                 <SelectContent>
-                  {environments.map((env) => (
-                    <SelectItem
-                      key={env.publicKey.toBase58()}
-                      value={env.publicKey.toBase58()}
-                    >
-                      {env.account.name ?? env.publicKey.toBase58()}
-                    </SelectItem>
-                  ))}
+                  {environments.length > 0 ? (
+                    environments.map((env) => (
+                      <SelectItem key={env.id} value={env.id}>
+                        {env.name ?? env.id}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <span className="text-xs pl-2">environments not found</span>
+                  )}
                 </SelectContent>
               </Select>
               {selectedEnv && (

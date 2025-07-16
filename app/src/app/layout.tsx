@@ -4,11 +4,10 @@ import "./globals.css";
 import { ThemeProvider as ShadcnThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { SidebarProvider } from "@/components/SidebarProvider";
-import { NetworkProvider } from "@/components/NetworkProvider";
+import "@interchain-ui/react/styles";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { AppWalletProvider } from "@/components/AppWalletProvider";
-import { SolanaNetworkProvider } from "@/components/SolanaNetworkProvider";
-import { AppConnectionProvider } from "@/components/AppConnectionProvider";
+import { AppNetworkProvider } from "@/components/AppNetworkProvider";
 
 export const metadata: Metadata = {
   title: "Overlock",
@@ -30,16 +29,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NetworkProvider>
+          <AppNetworkProvider>
             <AppWalletProvider>
-              <SolanaNetworkProvider>
-                <AppConnectionProvider>
-                  <SidebarProvider>{children}</SidebarProvider>
-                  <Toaster />
-                </AppConnectionProvider>
-              </SolanaNetworkProvider>
+              <SidebarProvider>{children}</SidebarProvider>
+              <Toaster />
             </AppWalletProvider>
-          </NetworkProvider>
+          </AppNetworkProvider>
         </ShadcnThemeProvider>
       </body>
     </html>
