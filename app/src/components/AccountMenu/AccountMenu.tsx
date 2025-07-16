@@ -44,6 +44,12 @@ export function AccountMenu() {
     });
   };
 
+  function formatAddress(address: string | null, chars = 9): string {
+    if (!address) return "";
+    if (address.length <= chars * 2) return address;
+    return `${address.slice(0, chars)}...${address.slice(-chars)}`;
+  }
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -61,7 +67,7 @@ export function AccountMenu() {
                   className="text-ellipsis font-semibold whitespace-nowrap overflow-hidden text-left"
                   style={{ direction: "rtl" }}
                 >
-                  {!address ? "Connect" : address}
+                  {!address ? "Connect" : formatAddress(address)}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -80,7 +86,7 @@ export function AccountMenu() {
                     className="text-ellipsis font-semibold whitespace-nowrap overflow-hidden text-left"
                     style={{ direction: "rtl" }}
                   >
-                    {address}
+                    {formatAddress(address)}
                   </span>
                 </div>
                 {address && (
