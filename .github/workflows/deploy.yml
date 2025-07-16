@@ -1,4 +1,4 @@
-name: Deploy Programs and Console
+name: Deploy Console
 
 on:
   push:
@@ -15,13 +15,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy Programs + Console
-
-    container:
-      image: ghcr.io/overlock-network/anchor:v0.31.1
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+    name: Build and Deploy Console
 
     steps:
       - name: Checkout repository
@@ -32,26 +26,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
-
-      - name: Set default Rust toolchain
-        run: rustup default stable
-
-      - name: Set up deploy keypair
-        run: |
-          mkdir -p ~/.config/solana
-          echo "${{ secrets.DEPLOY_KEYPAIR }}" > ~/.config/solana/id.json
-
-      - name: Set Solana cluster to devnet
-        run: solana config set --url https://api.devnet.solana.com
-
-      - name: Anchor Build
-        run: anchor build
-
-      - name: Airdrop 5 SOL to deploy key
-        run: solana airdrop 5 || echo "Airdrop failed (probably rate-limited), continuing anyway"
-
-      - name: Anchor Deploy
-        run: anchor deploy --provider.cluster devnet
 
       - name: Build Console (Next.js static export)
         run: npm run next-build

@@ -1,0 +1,122 @@
+{
+  "address": "BfHgyDmEcrmt2GyQ1ypLcopsKUJXp4zo86y3TnKffuLz",
+  "metadata": {
+    "name": "provider",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Overlock Provider"
+  },
+  "instructions": [
+    {
+      "name": "register_provider",
+      "discriminator": [
+        254,
+        209,
+        54,
+        184,
+        46,
+        197,
+        109,
+        78
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "provider",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "ip",
+          "type": "string"
+        },
+        {
+          "name": "port",
+          "type": "u16"
+        },
+        {
+          "name": "country",
+          "type": "string"
+        },
+        {
+          "name": "environment_type",
+          "type": "string"
+        },
+        {
+          "name": "availability",
+          "type": "bool"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Provider",
+      "discriminator": [
+        164,
+        180,
+        71,
+        17,
+        75,
+        216,
+        80,
+        195
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "CustomError",
+      "msg": "Custom error message"
+    }
+  ],
+  "types": [
+    {
+      "name": "Provider",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "ip",
+            "type": "string"
+          },
+          {
+            "name": "port",
+            "type": "u16"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "environment_type",
+            "type": "string"
+          },
+          {
+            "name": "availability",
+            "type": "bool"
+          }
+        ]
+      }
+    }
+  ]
+}

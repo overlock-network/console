@@ -17,8 +17,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "next-lint": "cd app && next lint",
-    "dev": "concurrently \"npm run anchor-localnet\" \"npm run next-dev\"",
-    "start": "concurrently \"npm run anchor-localnet\" \"npm run next-start\""
+    "dev": "npm run next-dev",
+    "start": "npm run next-start"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1",
