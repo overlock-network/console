@@ -7,32 +7,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
-import { useSessionToken } from "@/hooks/use-session-token";
-import { ENV_TOKEN } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
-export function TokenDialog() {
-  const { token, setToken } = useSessionToken(ENV_TOKEN);
-  const [tempToken, setTempToken] = useState(token);
-  const [open, setOpen] = useState(false);
+interface TokenDialogProps {
+  open: boolean;
+  onSave: (token: string) => void;
+}
 
-  useEffect(() => {
-    if (!token) {
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-    setTempToken(token);
-  }, [token]);
+export function TokenDialog({ open, onSave }: TokenDialogProps) {
+  const [tempToken, setTempToken] = useState("");
 
   const handleSave = () => {
-    if (tempToken.trim() === "") {
-      return;
-    }
-    setToken(tempToken);
-    setOpen(false);
+    if (!tempToken.trim()) return;
+    onSave(tempToken.trim());
   };
 
   return (

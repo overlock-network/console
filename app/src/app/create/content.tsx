@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useWallet, useEnvironments, useProviders } from "@/chain/client";
+import { useWallet, useProviders } from "@/chain/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -13,24 +13,21 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { CompositeResourceDefinition } from "@/lib/types";
 import { createResource, listXrds } from "@/api/ResourcesApi";
-import { TokenDialog } from "@/components/TokenDialog";
 import { ConnectWallet } from "@/components/ConnectWallet";
 import validator from "@rjsf/validator-ajv8";
 import { IChangeEvent } from "@rjsf/core";
 import { Theme as shadcnTheme } from "@rjsf/shadcn";
 import { withTheme } from "@rjsf/core";
 import { RJSFSchema } from "@rjsf/utils";
-import { ENV_TOKEN } from "@/lib/utils";
-import { useSessionToken } from "@/hooks/use-session-token";
+import { useEnvironment } from "@/components/EnvironmentProvider";
+import { EnvironmentSelector } from "@/components/EnvironmentSelector";
 
 const Form = withTheme(shadcnTheme);
 
 export default function Content() {
-  const { environments } = useEnvironments();
   const { toast } = useToast();
-  const { token } = useSessionToken(ENV_TOKEN);
+  const { token, selectedEnv, environments } = useEnvironment();
 
-  const [selectedEnv, setSelectedEnv] = useState<string>();
   const [xrds, setXrds] = useState<CompositeResourceDefinition[] | null>(null);
   const [selectedXrd, setSelectedXrd] = useState<CompositeResourceDefinition>();
   const [selectedVersion, setSelectedVersion] = useState<string>();
@@ -44,13 +41,6 @@ export default function Content() {
   const versionSchema = selectedXrd?.spec.versions.find(
     (v) => v.name === selectedVersion,
   )?.schema.openAPIV3Schema as RJSFSchema | undefined;
-
-  const handleSelectEnvironment = (value: string) => {
-    setSelectedEnv(value);
-    setSelectedXrd(undefined);
-    setSelectedVersion(undefined);
-    setXrds(null);
-  };
 
   const handleSelectXrd = (value: string) => {
     const found = xrds?.find((x) => x.metadata.name === value);
@@ -104,25 +94,7 @@ export default function Content() {
           <CardTitle>Create resource</CardTitle>
         </CardHeader>
         <CardContent className="grid sm:grid-cols-1 gap-5 xl:grid-cols-3">
-          <Select
-            value={selectedEnv ?? ""}
-            onValueChange={(value) => handleSelectEnvironment(value)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select environment" />
-            </SelectTrigger>
-            <SelectContent>
-              {environments.length > 0 ? (
-                environments.map((env) => (
-                  <SelectItem key={env.id} value={env.id}>
-                    {env.name ?? env.id}
-                  </SelectItem>
-                ))
-              ) : (
-                <span className="text-xs pl-2">environments not found</span>
-              )}
-            </SelectContent>
-          </Select>
+          <EnvironmentSelector />
 
           {xrds && xrds.length > 0 && (
             <Select
@@ -179,8 +151,6 @@ export default function Content() {
           )}
         </CardContent>
       </Card>
-
-      <TokenDialog />
     </div>
   );
 }
