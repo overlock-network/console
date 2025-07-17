@@ -3,29 +3,19 @@
 import { useEffect, useState } from "react";
 import { resourceColumns } from "@/components/ListTable/ResourceColumns";
 import { DataTable } from "@/components/ListTable/DataTable";
-import { useWallet, useEnvironments, useProviders } from "@/chain/client";
+import { useWallet, useProviders } from "@/chain/client";
 import { useToast } from "@/hooks/use-toast";
 import { ConnectWallet } from "@/components/ConnectWallet";
-import { TokenDialog } from "@/components/TokenDialog";
-import { useSessionToken } from "@/hooks/use-session-token";
 import { listResources } from "@/api/ResourcesApi";
-import { ENV_TOKEN } from "@/lib/utils";
 import { Resource } from "@/lib/types";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useEnvironment } from "@/components/EnvironmentProvider";
+import { EnvironmentSelector } from "@/components/EnvironmentSelector";
 
 export default function Content() {
   const { connected } = useWallet();
   const { toast } = useToast();
-  const { environments } = useEnvironments();
-  const { token } = useSessionToken(ENV_TOKEN);
+  const { environments, token, selectedEnv } = useEnvironment();
 
-  const [selectedEnv, setSelectedEnv] = useState<string>();
   const [resources, setResources] = useState<Resource[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -67,22 +57,7 @@ export default function Content() {
               Here&apos;s a list of available resources!
             </p>
           </div>
-          <Select value={selectedEnv ?? ""} onValueChange={setSelectedEnv}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select environment" />
-            </SelectTrigger>
-            <SelectContent>
-              {environments.length > 0 ? (
-                environments.map((env) => (
-                  <SelectItem key={env.id} value={env.id}>
-                    {env.name ?? env.id}
-                  </SelectItem>
-                ))
-              ) : (
-                <span className="text-xs pl-2">environments not found</span>
-              )}
-            </SelectContent>
-          </Select>
+          <EnvironmentSelector />
         </div>
 
         <DataTable<Resource>
@@ -91,8 +66,6 @@ export default function Content() {
           isLoading={isLoading}
         />
       </div>
-
-      <TokenDialog />
     </>
   );
 }

@@ -3,35 +3,26 @@
 import { createKey, removeKey, updateKeyData } from "@/api/ResourcesApi";
 import { DataTable } from "@/components/ListTable/DataTable";
 import { keyColumns } from "@/components/ListTable/KeyColumns";
-import { useWallet, useEnvironments, useProviders } from "@/chain/client";
+import { useWallet, useProviders } from "@/chain/client";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Key } from "@/lib/types";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { TokenDialog } from "@/components/TokenDialog";
-import { CROSSPLANE_LABELS, ENV_TOKEN } from "@/lib/utils";
+import { CROSSPLANE_LABELS } from "@/lib/utils";
 import { AddKeyRingDialog } from "@/components/AddKeyRingDialog/AddKeyRingDialog";
 import { EditKeyCard } from "@/components/EditKeyCard";
-import { useSessionToken } from "@/hooks/use-session-token";
 import { ConnectWallet } from "@/components/ConnectWallet";
 import { useKeyRings } from "@/hooks/use-key-rings";
+import { useEnvironment } from "@/components/EnvironmentProvider";
+import { EnvironmentSelector } from "@/components/EnvironmentSelector";
 
 export default function Content() {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const { connected } = useWallet();
   const { toast } = useToast();
-  const [selectedEnv, setSelectedEnv] = useState<string>();
-  const { token } = useSessionToken(ENV_TOKEN);
+  const { token, selectedEnv, environments } = useEnvironment();
   const [keyToEdit, setKeyToEdit] = useState<Key>();
-  const { environments } = useEnvironments();
 
   const selectedEnvironment = environments.find((e) => e.id == selectedEnv);
   const providerKey = selectedEnvironment?.providerId;
@@ -159,22 +150,7 @@ export default function Content() {
                   Here&apos;s a list of available Key Rings!
                 </p>
               </div>
-              <Select value={selectedEnv ?? ""} onValueChange={setSelectedEnv}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select environment" />
-                </SelectTrigger>
-                <SelectContent>
-                  {environments.length > 0 ? (
-                    environments.map((env) => (
-                      <SelectItem key={env.id} value={env.id}>
-                        {env.name ?? env.id}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <span className="text-xs pl-2">environments not found</span>
-                  )}
-                </SelectContent>
-              </Select>
+              <EnvironmentSelector />
               {selectedEnv && (
                 <Button className="mt-5" onClick={() => setAddDialogOpen(true)}>
                   <Plus className="mr-2 h-4 w-4" /> Add
@@ -196,8 +172,6 @@ export default function Content() {
           </>
         )}
       </div>
-
-      <TokenDialog />
 
       <AddKeyRingDialog
         open={addDialogOpen}
