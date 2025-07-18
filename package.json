@@ -27,6 +27,7 @@
     "@cosmos-kit/react": "^2.22.0",
     "@cosmos-kit/walletconnect": "^2.13.0",
     "@interchain-ui/react": "^1.26.3",
+    "@radix-ui/react-collapsible": "^1.1.11",
     "@solana-developers/helpers": "^2.8.1",
     "chain-registry": "^2.0.22",
     "concurrently": "^9.1.2",

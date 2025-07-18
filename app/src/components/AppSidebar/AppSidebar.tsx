@@ -12,27 +12,37 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  SidebarGroupLabel,
   useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { AccountMenu } from "@/components/AccountMenu";
 import { NetworkSelector } from "@/components/NetworkSelector";
 import Link from "next/link";
 import {
   CirclePlus,
   Container,
+  Fuel,
   KeyRound,
   LibraryBig,
   SquareStack,
-  Store,
+  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const items = [
+const marketplace = [
   {
-    title: "Marketplace",
-    url: "/marketplace",
-    icon: Store,
+    title: "Gas",
+    url: "/marketplace/gas",
+    icon: Fuel,
   },
+];
+
+const items = [
   {
     title: "Environments",
     url: "/environments",
@@ -80,6 +90,32 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
+
+              <Collapsible defaultOpen className="group/collapsible">
+                <SidebarGroup className={"p-0"}>
+                  <SidebarGroupLabel asChild>
+                    <CollapsibleTrigger className="flex items-center w-full">
+                      Marketplace
+                      <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                    </CollapsibleTrigger>
+                  </SidebarGroupLabel>
+                  <CollapsibleContent>
+                    <SidebarGroupContent>
+                      {marketplace.map((item) => (
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton asChild>
+                            <a href={item.url}>
+                              <item.icon />
+                              <span>{item.title}</span>
+                            </a>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarGroupContent>
+                  </CollapsibleContent>
+                </SidebarGroup>
+              </Collapsible>
+              <SidebarSeparator className="mb-2" />
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
