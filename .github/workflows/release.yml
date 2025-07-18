@@ -1,0 +1,92 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Build, Release and Deploy Console
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          submodules: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Install git-chglog
+        run: go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build Console (Next.js static export)
+        run: npm run next-build
+
+      - name: Add CNAME file
+        run: echo "console.overlock.network" > ./app/out/CNAME
+
+      - name: Install semver for git-semver-tags
+        run: npm install -g semver
+
+      - name: Get previous tag via git-semver-tags
+        id: semver
+        run: |
+          CURRENT_TAG=${GITHUB_REF#refs/tags/}
+
+          TAGS=$(npx git-semver-tags --exclude-pre-releases)
+          PREV_TAG=$(echo "$TAGS" | grep -v "^$CURRENT_TAG$" | head -n 1)
+
+          echo "Current tag: $CURRENT_TAG"
+          echo "Previous tag: $PREV_TAG"
+
+          echo "current_tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
+          echo "previous_tag=$PREV_TAG" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog
+        run: |
+          git-chglog --config .chglog/config.yml ${{ steps.semver.outputs.previous_tag }}..${{ steps.semver.outputs.current_tag }} > CHANGELOG.md
+
+      - name: Archive app build
+        run: |
+          cd ./app
+          tar -czf out.tar.gz out
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body_path: CHANGELOG.md
+          files: ./app/out.tar.gz
+
+      - name: Deploy Console to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./app/out
+
+      - name: Notify Discord
+        if: success()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
+        run: |
+          RELEASE_URL="https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}"
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"📦 New Console release [${{ github.ref_name }}]($RELEASE_URL) is out!\"}" \
+            $DISCORD_WEBHOOK
