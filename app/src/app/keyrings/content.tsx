@@ -150,7 +150,9 @@ export default function Content() {
                   Here&apos;s a list of available Key Rings!
                 </p>
               </div>
-              <EnvironmentSelector />
+              <div className="w-[200px]">
+                <EnvironmentSelector />
+              </div>
               {selectedEnv && (
                 <Button className="mt-5" onClick={() => setAddDialogOpen(true)}>
                   <Plus className="mr-2 h-4 w-4" /> Add

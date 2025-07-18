@@ -57,7 +57,9 @@ export default function Content() {
               Here&apos;s a list of available resources!
             </p>
           </div>
-          <EnvironmentSelector />
+          <div className="w-[200px]">
+            <EnvironmentSelector />
+          </div>
         </div>
 
         <DataTable<Resource>
