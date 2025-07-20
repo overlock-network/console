@@ -38,22 +38,20 @@ export default function Home() {
                     </div>
                   </div>
                 </Link>
-                <Link href="/marketplace" className="mb-5">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center rounded-full bg-secondary min-w-12 w-12 h-12">
-                      <ScanSearch />
-                    </div>
-                    <div>
-                      <p className="text-base text-primary">
-                        Explore the marketplace
-                      </p>
-                      <p className="text-sm">
-                        Browse through the marketplace of pre-made solutions
-                        with categories like blogs, blockchain nodes and more!
-                      </p>
-                    </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center rounded-full bg-secondary min-w-12 w-12 h-12">
+                    <ScanSearch />
                   </div>
-                </Link>
+                  <div>
+                    <p className="text-base text-primary">
+                      Explore the marketplace
+                    </p>
+                    <p className="text-sm">
+                      Browse through the marketplace of pre-made solutions with
+                      categories like blogs, blockchain nodes and more!
+                    </p>
+                  </div>
+                </div>
                 <Link href="https://docs.overlock.network/" className="mb-5">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center justify-center rounded-full bg-secondary min-w-12 w-12 h-12">
