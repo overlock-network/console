@@ -1,16 +1,16 @@
 import { Metadata } from "next";
-import Content from "./content";
 import { Inset } from "@/components/AppSidebar";
+import { Content } from "./content";
 
 export const metadata: Metadata = {
-  title: "Gas Marketplace",
-  description: "List of available Gas on marketplace.",
+  title: "Gas Collections Marketplace",
+  description: "List of available Gas Collections on marketplace.",
 };
 
-export default function GasMarketplacePage() {
+export default function GasPage() {
   return (
     <Inset pageTitle={metadata.title as string}>
-      <div className="flex h-full flex-1 flex-col space-y-8 p-8">
+      <div className="flex h-full items-center flex-col p-8">
         <Content />
       </div>
     </Inset>

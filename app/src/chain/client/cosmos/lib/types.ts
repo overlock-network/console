@@ -1,3 +1,5 @@
+import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { Contract } from "@/lib/types";
 import { overlock } from "@overlocknetwork/api";
 
 export type Network = { name: string; icon: React.ElementType };
@@ -88,3 +90,20 @@ export type LCDClient = {
     };
   };
 };
+
+export interface ContractsContextType {
+  contracts: Contract[];
+  loading: boolean;
+}
+
+export interface ContractsProviderProps<T> {
+  queryClientClass: QueryClientConstructor<T>;
+  fetchInfo: (instance: T) => Promise<Contract>;
+  children: React.ReactNode;
+  contractCodeId: string;
+}
+
+export type QueryClientConstructor<T> = new (
+  client: CosmWasmClient,
+  address: string,
+) => T;
