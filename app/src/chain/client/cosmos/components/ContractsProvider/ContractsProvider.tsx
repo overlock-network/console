@@ -4,7 +4,11 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { useToast } from "@/hooks/use-toast";
 import { Contract } from "@/lib/types";
-import { ContractsContextType, ContractsProviderProps } from "@/chain/client";
+import {
+  ContractsContextType,
+  ContractsProviderProps,
+  useNetwork,
+} from "@/chain/client";
 
 const ContractsContext = createContext<ContractsContextType | undefined>(
   undefined,
@@ -20,10 +24,11 @@ export function ContractsProvider<T>({
   const [loading, setLoading] = useState(true);
   const [client, setClient] = useState<CosmWasmClient | null>(null);
   const { toast } = useToast();
-  const endpoint = process.env.NEXT_PUBLIC_NFT_RPC_ENDPOINT;
+  const { networkMeta } = useNetwork();
 
   useEffect(() => {
-    if (!endpoint) {
+    const rpcEndpoint = networkMeta.apis.rpc[0].address;
+    if (!rpcEndpoint) {
       toast({
         title: "Error",
         description: "Missing RPC endpoint in environment",
@@ -31,7 +36,7 @@ export function ContractsProvider<T>({
       });
       return;
     }
-    CosmWasmClient.connect(endpoint)
+    CosmWasmClient.connect(rpcEndpoint)
       .then(setClient)
       .catch(() => {
         toast({
@@ -40,7 +45,7 @@ export function ContractsProvider<T>({
           variant: "destructive",
         });
       });
-  }, [toast, endpoint]);
+  }, [toast, networkMeta]);
 
   useEffect(() => {
     if (!client) return;
