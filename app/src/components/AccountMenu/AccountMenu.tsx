@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
 import { useWallet, useWalletModal } from "@/chain/client";
+import { formatAddress } from "@/lib/utils";
 
 export function AccountMenu() {
   const { toast } = useToast();
@@ -43,12 +44,6 @@ export function AccountMenu() {
       });
     });
   };
-
-  function formatAddress(address: string | null, chars = 9): string {
-    if (!address) return "";
-    if (address.length <= chars * 2) return address;
-    return `${address.slice(0, chars)}...${address.slice(-chars)}`;
-  }
 
   return (
     <SidebarMenu>

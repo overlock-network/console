@@ -208,3 +208,9 @@ export const countryCoordinates: Record<string, [number, number]> = {
   Zambia: [27.8493, -13.1339],
   Zimbabwe: [29.1549, -19.0154],
 };
+
+export function formatAddress(address: string | null, chars = 9): string {
+  if (!address) return "";
+  if (address.length <= chars * 2) return address;
+  return `${address.slice(0, chars)}...${address.slice(-chars)}`;
+}

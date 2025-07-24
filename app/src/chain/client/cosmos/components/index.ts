@@ -5,3 +5,4 @@ export {
 } from "./WalletModalProviderWrapper";
 export { WalletProviderWrapper } from "./WalletProviderWrapper";
 export { useWallet } from "./WalletProvider";
+export { ContractsProvider, useContracts } from "./ContractsProvider";

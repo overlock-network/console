@@ -68,3 +68,9 @@ export type Coin = {
   denom: string;
   amount: string;
 };
+
+export interface Contract {
+  name: string;
+  symbol: string;
+  address: string;
+}
