@@ -1,4 +1,5 @@
-import React, { createContext, useContext } from "react";
+"use client";
+import { createContext, useContext } from "react";
 import { useWalletModal as useSolanaWalletModal } from "@solana/wallet-adapter-react-ui";
 
 interface WalletModalContextType {

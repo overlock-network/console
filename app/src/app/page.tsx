@@ -38,7 +38,7 @@ export default function Home() {
                     </div>
                   </div>
                 </Link>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 mb-5">
                   <div className="flex items-center justify-center rounded-full bg-secondary min-w-12 w-12 h-12">
                     <ScanSearch />
                   </div>

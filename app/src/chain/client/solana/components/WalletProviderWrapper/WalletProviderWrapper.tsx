@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+"use client";
+import { useEffect, useState } from "react";
 import { WalletProvider as SolanaWalletProvider } from "@solana/wallet-adapter-react";
 import { WalletProvider } from "../WalletProvider";
 

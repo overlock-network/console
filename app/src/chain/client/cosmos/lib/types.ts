@@ -1,6 +1,7 @@
 import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { Contract } from "@/lib/types";
+import { Contract, Nft } from "@/lib/types";
 import { overlock } from "@overlocknetwork/api";
+import { TokensResponse } from "@/../../generated/Cw721base.types";
 
 export type Network = { name: string; icon: React.ElementType };
 
@@ -96,6 +97,17 @@ export interface ContractsContextType {
   loading: boolean;
 }
 
+export interface NftContextType {
+  getCollectionNft: (
+    address: string,
+    startAfter?: string,
+    limit?: number,
+  ) => Promise<{
+    nft: Nft[];
+    nextStartAfter?: string;
+  }>;
+}
+
 export interface ContractsProviderProps<T> {
   queryClientClass: QueryClientConstructor<T>;
   fetchInfo: (instance: T) => Promise<Contract>;
@@ -107,3 +119,18 @@ export type QueryClientConstructor<T> = new (
   client: CosmWasmClient,
   address: string,
 ) => T;
+
+export interface NftProviderProps<T> {
+  queryClientClass: QueryClientConstructor<T>;
+  fetchNft: (
+    instance: T,
+    limit: number,
+    startAfter?: string,
+  ) => Promise<TokensResponse>;
+  fetchInfo: (
+    instance: T,
+    tokenId: string,
+  ) => Promise<{ token_uri?: string | null }>;
+  children: React.ReactNode;
+  contractId: string;
+}

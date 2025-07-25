@@ -74,3 +74,11 @@ export interface Contract {
   symbol: string;
   address: string;
 }
+
+export interface Nft {
+  tokenId: string;
+  tokenUri: string;
+  name: string;
+  image: string;
+  description: string;
+}

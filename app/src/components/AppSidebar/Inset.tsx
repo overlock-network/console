@@ -30,8 +30,8 @@ export function Inset({
 
   return (
     <SidebarInset>
-      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b backdrop-blur transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-        <div className="flex items-center gap-2 px-4 w-full">
+      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center justify-center gap-2 px-8 border-b backdrop-blur transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+        <div className="flex items-center gap-2 max-w-[1400px] w-full">
           <SidebarTrigger className="-ml-1" side="left" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           {pageTitle == "Editor" && configurationId ? (

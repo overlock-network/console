@@ -1,3 +1,4 @@
+"use client";
 import { WalletModalProvider as SolanaWalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { WalletModalProvider } from "../WalletModalProvider";
 
