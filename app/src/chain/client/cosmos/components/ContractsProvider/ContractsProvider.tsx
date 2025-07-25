@@ -28,14 +28,7 @@ export function ContractsProvider<T>({
 
   useEffect(() => {
     const rpcEndpoint = networkMeta.apis.rpc[0].address;
-    if (!rpcEndpoint) {
-      toast({
-        title: "Error",
-        description: "Missing RPC endpoint in environment",
-        variant: "destructive",
-      });
-      return;
-    }
+
     CosmWasmClient.connect(rpcEndpoint)
       .then(setClient)
       .catch(() => {
@@ -56,8 +49,8 @@ export function ContractsProvider<T>({
         const addresses = await client.getContracts(parseInt(contractCodeId));
         const results = await Promise.all(
           addresses.map(async (address) => {
-            const instance = new queryClientClass(client, address);
-            return await fetchInfo(instance);
+            const queryClient = new queryClientClass(client, address);
+            return await fetchInfo(queryClient);
           }),
         );
         setContracts(results);

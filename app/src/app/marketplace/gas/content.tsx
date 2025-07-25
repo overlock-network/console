@@ -1,7 +1,6 @@
 "use client";
 
-import { ContractsProvider } from "@/chain/client";
-import { Cw721baseQueryClient } from "@/../../generated/Cw721base.client";
+import { ContractsProvider, GasContractClient } from "@/chain/client";
 import { ContractsTable } from "@/components/ContractsTable";
 
 export function Content() {
@@ -9,7 +8,7 @@ export function Content() {
   if (!contractCodeId) return;
   return (
     <ContractsProvider
-      queryClientClass={Cw721baseQueryClient}
+      queryClientClass={GasContractClient}
       fetchInfo={async (client) => {
         const info = await client.contractInfo();
         return {
