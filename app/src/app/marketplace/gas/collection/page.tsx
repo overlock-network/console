@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default async function GasCollectionPage() {
   return (
     <Inset pageTitle={metadata.title as string}>
-      <div className="flex h-full items-center flex-col p-8">
+      <div className="flex h-full items-center flex-col p-8 relative">
         <Content />
       </div>
     </Inset>
