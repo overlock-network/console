@@ -31,6 +31,7 @@ import {
   LibraryBig,
   SquareStack,
   ChevronDown,
+  Code,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +40,11 @@ const marketplace = [
     title: "Gas",
     url: "/marketplace/gas",
     icon: Fuel,
+  },
+  {
+    title: "Configurations",
+    url: "/marketplace/configuration",
+    icon: Code,
   },
 ];
 
