@@ -14,7 +14,7 @@ import { useNft } from "@/chain/client";
 
 const NFT_CARDS_QUANTITY = 20;
 
-export function NftCards({ id }: { id: string }) {
+export function GasCards({ id }: { id: string }) {
   const { getCollectionNft } = useNft();
   const [nft, setNft] = useState<Nft[]>([]);
   const [pageLoading, setPageLoading] = useState(false);
