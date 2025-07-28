@@ -2,11 +2,9 @@
 
 import { ContractsProvider, NftContractClient } from "@/chain/client";
 import { ContractsTable } from "@/components/ContractsTable";
-import { useRouter } from "next/navigation";
 
 export function Content() {
-  const contractCodeId = process.env.NEXT_PUBLIC_GAS_CONTRACT_ID;
-  const router = useRouter();
+  const contractCodeId = process.env.NEXT_PUBLIC_CONFIGURATION_CONTRACT_ID;
 
   if (!contractCodeId) return;
   return (
@@ -21,11 +19,7 @@ export function Content() {
       }}
       contractCodeId={contractCodeId}
     >
-      <ContractsTable
-        onRowClick={(row) => {
-          router.push(`/marketplace/gas/collection?id=${row.address}`);
-        }}
-      />
+      <ContractsTable />
     </ContractsProvider>
   );
 }
