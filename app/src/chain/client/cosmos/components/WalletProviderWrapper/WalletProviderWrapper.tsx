@@ -1,5 +1,3 @@
-"use client";
-
 import { WalletProvider } from "../WalletProvider";
 import { ChainProvider } from "@cosmos-kit/react";
 import { useNetwork } from "../NetworkProvider";
@@ -18,10 +16,10 @@ export function WalletProviderWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const { networkMeta: meta } = useNetwork();
+  const { networkMeta: meta, currentNetwork } = useNetwork();
   const wallets = [new KeplrExtensionWallet(keplrExtensionInfo)];
 
-  const chain = getOverlockChain(meta);
+  const chain = getOverlockChain(meta, currentNetwork);
   const assetList = getOverlockAssetList(meta);
 
   return (
@@ -31,6 +29,14 @@ export function WalletProviderWrapper({
       throwErrors={false}
       assetLists={[assetList]}
       walletModal={DefaultModal}
+      endpointOptions={{
+        endpoints: {
+          [meta.chain_name]: {
+            rpc: meta.apis.rpc.map((api) => api.address),
+            rest: meta.apis.rest.map((api) => api.address),
+          },
+        },
+      }}
     >
       <WalletProvider>{children}</WalletProvider>
     </ChainProvider>
