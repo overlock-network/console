@@ -4,7 +4,7 @@ import { GasContractClient } from "@/chain/client";
 
 import { useSearchParams } from "next/navigation";
 import { NftProvider } from "@/chain/client";
-import { NftCards } from "@/components/NftCards";
+import { GasCards } from "@/components/GasCards";
 
 export function Content() {
   const searchParams = useSearchParams();
@@ -22,7 +22,7 @@ export function Content() {
         return await client.allTokens({ limit, startAfter });
       }}
     >
-      <NftCards id={contractId} />
+      <GasCards id={contractId} />
     </NftProvider>
   );
 }
