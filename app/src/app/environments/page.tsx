@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function EnvironmentsListPage() {
   return (
     <Inset pageTitle={metadata.title as string}>
-      <div className="flex h-full flex-1 flex-col space-y-8 p-8">
+      <div className="flex h-full flex-1 flex-col p-8 items-center">
         <EnvironmentProvider>
           <Content />
         </EnvironmentProvider>

@@ -15,10 +15,12 @@ export default function Content() {
   }
 
   return (
-    <>
-      <div className="flex items-end justify-between gap-2 space-y-2">
+    <div className="max-w-[1400px] w-full">
+      <div className="flex items-end justify-between gap-2 mb-10">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Environments</h2>
+          <h2 className="text-2xl font-bold tracking-tight mb-2">
+            Environments
+          </h2>
           <p className="text-muted-foreground">
             Here&apos;s a list of available environments!
           </p>
@@ -29,6 +31,6 @@ export default function Content() {
         data={environments}
         isLoading={isLoading}
       />
-    </>
+    </div>
   );
 }
