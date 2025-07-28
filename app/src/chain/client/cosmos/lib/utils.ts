@@ -12,7 +12,7 @@ import {
   ibcProtoRegistry,
 } from "interchain";
 import type { AssetList, Chain } from "@chain-registry/types";
-import { NetworkMeta } from "./types";
+import { Network, NetworkMeta } from "./types";
 
 export const protoRegistry: ReadonlyArray<[string, GeneratedType]> = [
   ...cosmosProtoRegistry,
@@ -30,11 +30,15 @@ export const aminoConverters = {
 
 export const COIN_DECIMALS = 6;
 
-export function getOverlockChain(meta: NetworkMeta): Chain {
+export function getOverlockChain(
+  meta: NetworkMeta,
+  currentNetwork: Network,
+): Chain {
+  const network_type = currentNetwork.name == "Devnet" ? "devnet" : "testnet";
   return {
     chain_name: meta.chain_name,
     status: meta.status,
-    network_type: "testnet",
+    network_type,
     pretty_name: meta.pretty_name,
     chain_id: meta.chain_id,
     chain_type: "cosmos",
