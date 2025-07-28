@@ -94,7 +94,7 @@ export function NftCards({ id }: { id: string }) {
         ))}
       </div>
 
-      {nft.length > 0 && (
+      {nft.length > 0 ? (
         <div className="mt-6">
           <Pagination
             page={page}
@@ -102,6 +102,10 @@ export function NftCards({ id }: { id: string }) {
             onPageChange={handlePageChange}
             loading={pageLoading}
           />
+        </div>
+      ) : (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex">
+          <p>No Gas found for the selected collection.</p>
         </div>
       )}
     </div>
