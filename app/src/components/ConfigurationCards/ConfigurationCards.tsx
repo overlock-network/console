@@ -1,4 +1,4 @@
-import { Gas, Nft } from "@/lib/types";
+import { Configuration, Nft } from "@/lib/types";
 import {
   Card,
   CardHeader,
@@ -6,7 +6,6 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/Pagination";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -14,9 +13,9 @@ import { useNft } from "@/chain/client";
 
 const NFT_CARDS_QUANTITY = 20;
 
-export function GasCards({ id }: { id: string }) {
-  const { getCollectionNft } = useNft<Gas>();
-  const [nft, setNft] = useState<Nft<Gas>[]>([]);
+export function ConfigurationCards({ id }: { id: string }) {
+  const { getCollectionNft } = useNft<Configuration>();
+  const [nft, setNft] = useState<Nft<Configuration>[]>([]);
   const [pageLoading, setPageLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [startAfterMap, setStartAfterMap] = useState<{
@@ -88,7 +87,11 @@ export function GasCards({ id }: { id: string }) {
               )}
             </CardHeader>
             <CardContent>
-              <Button>Buy</Button>
+              {n.metadata.crossplane_version && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Crossplane Version: {n.metadata.crossplane_version}
+                </p>
+              )}
             </CardContent>
           </Card>
         ))}
@@ -105,7 +108,7 @@ export function GasCards({ id }: { id: string }) {
         </div>
       ) : (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex">
-          <p>No Gas found for the selected collection.</p>
+          <p>No Nft found for the selected collection.</p>
         </div>
       )}
     </div>

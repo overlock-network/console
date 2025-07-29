@@ -1,6 +1,6 @@
 "use client";
 
-import { ContractsProvider, NftContractClient } from "@/chain/client";
+import { ContractsProvider, GasContractClient } from "@/chain/client";
 import { ContractsTable } from "@/components/ContractsTable";
 import { useRouter } from "next/navigation";
 
@@ -11,7 +11,7 @@ export function Content() {
   if (!contractCodeId) return;
   return (
     <ContractsProvider
-      queryClientClass={NftContractClient}
+      queryClientClass={GasContractClient}
       fetchInfo={async (client) => {
         const info = await client.contractInfo();
         return {

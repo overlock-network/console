@@ -97,13 +97,13 @@ export interface ContractsContextType {
   loading: boolean;
 }
 
-export interface NftContextType {
+export interface NftContextType<T> {
   getCollectionNft: (
     address: string,
     startAfter?: string,
     limit?: number,
   ) => Promise<{
-    nft: Nft[];
+    nft: Nft<T>[];
     nextStartAfter?: string;
   }>;
 }
