@@ -1,9 +1,9 @@
 "use client";
 
-import { GasContractClient } from "@/chain/client";
+import { ConfigurationContractClient } from "@/chain/client";
 import { useSearchParams } from "next/navigation";
 import { NftProvider } from "@/chain/client";
-import { GasCards } from "@/components/GasCards";
+import { ConfigurationCards } from "@/components/ConfigurationCards/ConfigurationCards";
 
 export function Content() {
   const searchParams = useSearchParams();
@@ -12,16 +12,16 @@ export function Content() {
 
   return (
     <NftProvider
-      queryClientClass={GasContractClient}
+      queryClientClass={ConfigurationContractClient}
       fetchInfo={async (client, tokenId) => {
         return await client.nftInfo({ tokenId });
       }}
-      contractId={contractId}
       fetchNft={async (client, limit, startAfter) => {
         return await client.allTokens({ limit, startAfter });
       }}
+      contractId={contractId}
     >
-      <GasCards id={contractId} />
+      <ConfigurationCards id={contractId} />
     </NftProvider>
   );
 }

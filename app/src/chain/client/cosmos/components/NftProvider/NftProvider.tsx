@@ -1,13 +1,11 @@
-"use client";
-
-import {
+import React, {
   createContext,
   useContext,
   useEffect,
   useState,
   useCallback,
 } from "react";
-import { CosmWasmClient, JsonObject } from "@cosmjs/cosmwasm-stargate";
+import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { useToast } from "@/hooks/use-toast";
 import { Nft } from "@/lib/types";
 import {
@@ -16,14 +14,9 @@ import {
   useNetwork,
 } from "@/chain/client/cosmos";
 
-const NftContext = createContext<NftContextType | undefined>(undefined);
-
-const normalizeUri = (uri: string): string => {
-  if (!uri) return "";
-  return uri.startsWith("ipfs://")
-    ? uri.replace("ipfs://", "https://ipfs.io/ipfs/")
-    : uri;
-};
+const NftContext = createContext<NftContextType<unknown> | undefined>(
+  undefined,
+);
 
 export function NftProvider<T>({
   queryClientClass,
@@ -54,7 +47,7 @@ export function NftProvider<T>({
       address: string,
       startAfter?: string,
       limit: number = 20,
-    ): Promise<{ nft: Nft[]; nextStartAfter?: string }> => {
+    ): Promise<{ nft: Nft<T>[]; nextStartAfter?: string }> => {
       if (!client) return { nft: [] };
 
       try {
@@ -69,18 +62,17 @@ export function NftProvider<T>({
             const nftInfo = await fetchInfo(queryClient, tokenId);
             const tokenUri = nftInfo.token_uri || "";
 
-            let metadata: JsonObject = {};
+            let metadata = {} as T;
             if (tokenUri) {
-              const res = await fetch(normalizeUri(tokenUri));
-              if (res.ok) metadata = await res.json();
+              const res = await fetch(tokenUri);
+              if (res.ok) {
+                metadata = (await res.json()) as T;
+              }
             }
 
             return {
               tokenId,
-              tokenUri,
-              name: metadata.name,
-              image: normalizeUri(metadata.image),
-              description: metadata.description,
+              metadata,
             };
           }),
         );
@@ -105,8 +97,10 @@ export function NftProvider<T>({
   );
 }
 
-export const useNft = () => {
-  const context = useContext(NftContext);
+export function useNft<T>() {
+  const context = useContext(
+    NftContext as React.Context<NftContextType<T> | undefined>,
+  );
   if (!context) throw new Error("useNft must be used within a NftProvider");
   return context;
-};
+}

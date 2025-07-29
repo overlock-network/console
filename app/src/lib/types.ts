@@ -75,10 +75,22 @@ export interface Contract {
   address: string;
 }
 
-export interface Nft {
-  tokenId: string;
-  tokenUri: string;
-  name: string;
-  image: string;
+export interface Gas {
   description: string;
+  image: string;
+  name: string;
+}
+
+export interface Configuration {
+  description: string;
+  image: string;
+  name: string;
+  configuration_image_url: string;
+  crossplane_version: string;
+  image_sha: string;
+}
+
+export interface Nft<T = unknown> {
+  tokenId: string;
+  metadata: T;
 }
