@@ -4,10 +4,12 @@ import { ConfigurationContractClient } from "@/chain/client";
 import { useSearchParams } from "next/navigation";
 import { NftProvider } from "@/chain/client";
 import { ConfigurationCards } from "@/components/ConfigurationCards/ConfigurationCards";
+import { MintConfigurationDialog } from "@/components/MintConfigurationDialog";
 
 export function Content() {
   const searchParams = useSearchParams();
   const contractId = searchParams.get("id");
+
   if (!contractId) return;
 
   return (
@@ -21,6 +23,9 @@ export function Content() {
       }}
       contractId={contractId}
     >
+      <div className="flex ml-auto mb-4">
+        <MintConfigurationDialog contractId={contractId} />
+      </div>
       <ConfigurationCards id={contractId} />
     </NftProvider>
   );

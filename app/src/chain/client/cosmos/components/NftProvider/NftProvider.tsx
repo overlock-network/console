@@ -5,14 +5,20 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import {
+  CosmWasmClient,
+  SigningCosmWasmClient,
+} from "@cosmjs/cosmwasm-stargate";
 import { useToast } from "@/hooks/use-toast";
 import { Nft } from "@/lib/types";
 import {
   NftContextType,
   NftProviderProps,
   useNetwork,
+  useWallet,
 } from "@/chain/client/cosmos";
+import { useChain } from "@cosmos-kit/react";
+import { GasPrice } from "@cosmjs/stargate";
 
 const NftContext = createContext<NftContextType<unknown> | undefined>(
   undefined,
@@ -25,22 +31,35 @@ export function NftProvider<T>({
   children,
 }: NftProviderProps<T>) {
   const [client, setClient] = useState<CosmWasmClient | null>(null);
+  const [signingClient, setSigningClient] =
+    useState<SigningCosmWasmClient | null>(null);
   const { toast } = useToast();
   const { networkMeta } = useNetwork();
+  const { getOfflineSigner, address, isWalletConnected } = useChain(
+    networkMeta.chain_name,
+  );
+  const { balance } = useWallet();
+  const rpcEndpoint = networkMeta.apis.rpc[0].address;
+
+  CosmWasmClient.connect(rpcEndpoint)
+    .then(setClient)
+    .catch(() => {
+      toast({
+        title: "Error",
+        description: "Failed to connect to RPC",
+        variant: "destructive",
+      });
+    });
 
   useEffect(() => {
-    const rpcEndpoint = networkMeta.apis.rpc[0].address;
+    if (isWalletConnected) {
+      const gasPrice = GasPrice.fromString("0ovk");
 
-    CosmWasmClient.connect(rpcEndpoint)
-      .then(setClient)
-      .catch(() => {
-        toast({
-          title: "Error",
-          description: "Failed to connect to RPC",
-          variant: "destructive",
-        });
-      });
-  }, [toast, networkMeta]);
+      SigningCosmWasmClient.connectWithSigner(rpcEndpoint, getOfflineSigner(), {
+        gasPrice,
+      }).then(setSigningClient);
+    }
+  }, [isWalletConnected]);
 
   const getCollectionNft = useCallback(
     async (
@@ -87,11 +106,62 @@ export function NftProvider<T>({
         return { nft: [] };
       }
     },
-    [client, toast],
+    [client],
+  );
+
+  const mintNft = useCallback(
+    async ({
+      contractAddress,
+      tokenId,
+      tokenUri = "",
+    }: {
+      contractAddress: string;
+      tokenId: string;
+      tokenUri?: string;
+    }) => {
+      if (!signingClient || !address) {
+        toast({
+          title: "Error",
+          description: "Failed to mint NFT",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (balance && Number(balance.amount) > 0) {
+        try {
+          const msg = {
+            mint: {
+              token_id: tokenId,
+              owner: address,
+              token_uri: tokenUri,
+            },
+          };
+          await signingClient.execute(address, contractAddress, msg, "auto");
+          toast({
+            title: "Success",
+            description: `NFT minted successfully!`,
+          });
+        } catch {
+          toast({
+            title: "Error",
+            description: "Failed to mint NFT",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Error",
+          description: "You don't have enough tokens",
+          variant: "destructive",
+        });
+      }
+    },
+    [signingClient, address, balance],
   );
 
   return (
-    <NftContext.Provider value={{ getCollectionNft }}>
+    <NftContext.Provider value={{ getCollectionNft, mintNft }}>
       {children}
     </NftContext.Provider>
   );

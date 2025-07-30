@@ -106,6 +106,11 @@ export interface NftContextType<T> {
     nft: Nft<T>[];
     nextStartAfter?: string;
   }>;
+  mintNft: (params: {
+    contractAddress: string;
+    tokenId: string;
+    tokenUri?: string;
+  }) => Promise<void>;
 }
 
 export interface ContractsProviderProps<T> {

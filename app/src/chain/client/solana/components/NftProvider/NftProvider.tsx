@@ -16,8 +16,10 @@ export function NftProvider<T>({ children }: NftProviderProps<T>) {
     return { nft: [] };
   }, []);
 
+  const mintNft = async () => {};
+
   return (
-    <NftContext.Provider value={{ getCollectionNft }}>
+    <NftContext.Provider value={{ getCollectionNft, mintNft }}>
       {children}
     </NftContext.Provider>
   );

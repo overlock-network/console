@@ -94,3 +94,11 @@ export interface Nft<T = unknown> {
   tokenId: string;
   metadata: T;
 }
+
+export interface WalletContextType {
+  disconnect: () => Promise<void>;
+  connected: boolean;
+  address: string | null;
+  balance: Coin | null;
+  fetchBalance: () => Promise<void>;
+}

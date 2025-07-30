@@ -32,7 +32,10 @@
     "chain-registry": "^2.0.22",
     "concurrently": "^9.1.2",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "@cosmjs/amino": "0.32.4",
+    "@cosmjs/proto-signing": "0.32.4",
+    "@cosmjs/stargate": "0.32.4"
   },
   "devDependencies": {
     "@solana/web3.js": "^1.98.2",
